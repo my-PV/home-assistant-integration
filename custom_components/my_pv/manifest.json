@@ -14,13 +14,13 @@
       "macaddress": "6869C4*"
     }
   ],
-  "documentation": "https://github.com/my-PV/mypv_HomeAssistant_official",
+  "documentation": "https://github.com/my-PV/home-assistant-integration",
   "integration_type": "device",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/my-PV/mypv_HomeAssistant_official/issues",
+  "issue_tracker": "https://github.com/my-PV/home-assistant-integration/issues",
   "loggers": ["my_pv"],
   "quality_scale": "bronze",
-  "requirements": ["my-PV==0.0.1rc1"],
+  "requirements": ["my-pv==0.0.1rc1"],
   "version": "0.0.1rc1",
   "zeroconf": ["_mypv._tcp.local."]
 }
