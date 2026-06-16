@@ -1,0 +1,200 @@
+{
+    "common": {
+        "discovery_description": "Do you want to set up {name}?",
+        "password_description": "The password of your my-PV device. If no custom password is set you have to use the **devicekey** which can be found under the \u24d8 info menu of your my-PV device. For the HEA\u2022THOR IoT you can find the **devicekey** on the device label."
+    },
+    "config": {
+        "abort": {
+            "already_configured": "Device is already configured",
+            "cannot_connect": "Failed to connect"
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_password": "Invalid password",
+            "unknown_error": "Unexpected error"
+        },
+        "step": {
+            "auth": {
+                "data": {
+                    "password": "Password"
+                },
+                "data_description": {
+                    "password": "The password of your my-PV device. If no custom password is set you have to use the **devicekey** which can be found under the \u24d8 info menu of your my-PV device. For the HEA\u2022THOR IoT you can find the **devicekey** on the device label."
+                },
+                "title": "{name} password"
+            },
+            "discovery_auth": {
+                "data": {
+                    "password": "Password"
+                },
+                "data_description": {
+                    "password": "The password of your my-PV device. If no custom password is set you have to use the **devicekey** which can be found under the \u24d8 info menu of your my-PV device. For the HEA\u2022THOR IoT you can find the **devicekey** on the device label."
+                },
+                "description": "Do you want to set up {name}?",
+                "title": "{name}"
+            },
+            "discovery_confirm": {
+                "description": "Do you want to set up {name}?",
+                "title": "{name}"
+            },
+            "user": {
+                "data": {
+                    "host": "Host"
+                },
+                "data_description": {
+                    "host": "The IP address or hostname of your my-PV device."
+                },
+                "title": "my-PV Device"
+            }
+        }
+    },
+    "entity": {
+        "binary_sensor": {
+            "blockactive": {
+                "name": "Block Status"
+            }
+        },
+        "button": {
+            "check_fwupd": {
+                "name": "Check Firmware Update"
+            },
+            "firmware_download": {
+                "name": "Download Firmware"
+            },
+            "p9s_fw": {
+                "name": "Firmware Update"
+            },
+            "ps_fw": {
+                "name": "Power Section Firmware Update"
+            },
+            "reboot_device": {
+                "name": "Reboot"
+            }
+        },
+        "number": {
+            "bsttemp": {
+                "name": "Boost Target Temperature"
+            },
+            "maxpwr": {
+                "name": "Maximum Power"
+            },
+            "ww1boost": {
+                "name": "Boost Target Temperature"
+            },
+            "ww_boost_h": {
+                "name": "Minimum Hysteresis"
+            },
+            "ww_targ_h": {
+                "name": "Maximum Hysteresis"
+            }
+        },
+        "select": {
+            "bstmode": {
+                "name": "Boost Mode",
+                "state": {
+                    "0": "Off",
+                    "1": "On",
+                    "3": "Relais",
+                    "4": "SELV-Relais",
+                    "5": "AUX-Relais"
+                }
+            }
+        },
+        "sensor": {
+            "cur_eth_mode": {
+                "name": "Network Mode",
+                "state": {
+                    "0": "LAN",
+                    "1": "WLAN",
+                    "2": "AP"
+                }
+            },
+            "curr_l1": {
+                "name": "Current phase L1"
+            },
+            "curr_l2": {
+                "name": "Current phase L2"
+            },
+            "curr_l3": {
+                "name": "Current phase L3"
+            },
+            "freq": {
+                "name": "Mains Frequency"
+            },
+            "screen_mode_flag": {
+                "name": "Device Status",
+                "state": {
+                    "0": "Standby",
+                    "1": "Heat",
+                    "2": "Boost",
+                    "3": "Heating finished",
+                    "4": "No connection / Disabled",
+                    "5": "Failure",
+                    "6": "Block active"
+                }
+            },
+            "soc": {
+                "name": "Boiler State of Charge"
+            },
+            "temp1": {
+                "name": "Temperature 1"
+            },
+            "temp2": {
+                "name": "Temperature 2"
+            },
+            "temp3": {
+                "name": "Temperature 3"
+            },
+            "temp4": {
+                "name": "Temperature 4"
+            },
+            "uptime": {
+                "name": "Uptime"
+            },
+            "volt_l1": {
+                "name": "Voltage phase L1"
+            },
+            "volt_l2": {
+                "name": "Voltage phase L2"
+            },
+            "volt_l3": {
+                "name": "Voltage phase L3"
+            },
+            "wifi_signal": {
+                "name": "Wi-Fi Signal Strength",
+                "state": {
+                    "0": "Poor",
+                    "1": "Low",
+                    "2": "Average",
+                    "3": "Good",
+                    "4": "Strong"
+                }
+            },
+            "wifi_signal_strength": {
+                "name": "Wi-Fi Signal Strength"
+            }
+        },
+        "switch": {
+            "boostactive": {
+                "name": "Boost Active"
+            },
+            "bstmode": {
+                "name": "Boost Mode"
+            },
+            "bststrt": {
+                "name": "Manual Boost"
+            }
+        }
+    },
+    "exceptions": {
+        "cannot_connect": {
+            "message": "Failed to connect"
+        },
+        "device_unavailable": {
+            "message": "Device on {uri} is unavailable"
+        },
+        "unknown_error": {
+            "message": "Unknown error."
+        }
+    }
+}
