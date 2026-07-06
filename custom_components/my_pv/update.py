@@ -112,7 +112,7 @@ class MyPVCommandUpdate(CoordinatorEntity, UpdateEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        if not self.coordinator.connected:
+        if not self.coordinator.device.connected:
             self._attr_available = False
         else:
             installed_version = self.coordinator.get_data_value(
@@ -149,7 +149,7 @@ class MyPVCommandUpdate(CoordinatorEntity, UpdateEntity):
         installing the update.
         """
         _LOGGER.error("Updating %s", self.name)
-        if not self.coordinator.connected:
+        if not self.coordinator.device.connected:
             self._attr_available = False
         else:
             if (

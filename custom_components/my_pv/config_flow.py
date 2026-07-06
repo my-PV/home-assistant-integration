@@ -1,7 +1,7 @@
 """Config flow for the my-PV integration."""
 
 import logging
-from typing import Any, Final
+from typing import Any, Final, override
 
 from my_pv import MyPVLocalDevice
 from my_pv.exceptions import MyPVAuthenticationError
@@ -42,9 +42,11 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
 
     _host: str
     _device_model: str
+    _device_serial_number: str
 
     _reauth_entry: ConfigEntry | None = None
 
+    @override
     async def async_step_zeroconf(
         self, discovery_info: ZeroconfServiceInfo
     ) -> ConfigFlowResult:
@@ -58,6 +60,7 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
 
         return await self.async_step_discovery_confirm()
 
+    @override
     async def async_step_dhcp(
         self, discovery_info: DhcpServiceInfo
     ) -> ConfigFlowResult:
@@ -77,17 +80,15 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
     ) -> ConfigFlowResult:
         """Handle discovery confirmation."""
         if user_input is not None:
+            title = f"my-PV {self._device_model} {self._device_serial_number[6:]}"
             data = {
                 CONF_HOST: self._host,
             }
-            return self.async_create_entry(
-                title=f"my-PV {self._device_model}", data=data
-            )
+            return self.async_create_entry(title=title, data=data)
 
         password_needed = False
 
-        # Check if we can connect to the device
-        device = await MyPVLocalDevice(self._host)
+        device = MyPVLocalDevice(self._host)
         try:
             if not await device.connect():
                 return self.async_abort(reason="cannot_connect")
@@ -96,10 +97,9 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
         finally:
             await device.disconnect()
 
-        if device.serial_number:
-            await self.async_set_unique_id(device.serial_number)
-            # Update host ip address when device is already configured and abort.
-            self._abort_if_unique_id_configured(updates={CONF_HOST: self._host})
+        self._device_serial_number = device.serial_number
+        await self.async_set_unique_id(device.serial_number)
+        self._abort_if_unique_id_configured(updates={CONF_HOST: self._host})
 
         self._device_model = device.model
         if password_needed:
@@ -126,6 +126,7 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle discovery password authentication."""
         return await self.async_step_auth(user_input, "discovery_auth")
 
+    @override
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
@@ -133,13 +134,10 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            HOST_SCHEMA(user_input)
-
             host = user_input[CONF_HOST]
             password_needed = False
 
-            # Check if we can connect to the device
-            device = await MyPVLocalDevice(host)
+            device = MyPVLocalDevice(host)
             try:
                 if not await device.connect():
                     errors[CONF_BASE] = "cannot_connect"
@@ -157,13 +155,12 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(device.serial_number)
                 self._abort_if_unique_id_configured()
 
-                title = f"my-PV {device.model}"
+                title = f"my-PV {device.model} {device.serial_number[6:]}"
                 data = {
                     CONF_HOST: host,
                 }
                 return self.async_create_entry(title=title, data=data)
 
-        # Combine user input with schema.
         data_schema = self.add_suggested_values_to_schema(HOST_SCHEMA, user_input or {})
 
         return self.async_show_form(
@@ -179,16 +176,13 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            AUTH_SCHEMA(user_input)
-
             if self._reauth_entry:
                 host = self._reauth_entry.data[CONF_HOST]
             else:
                 host = self._host
             password = user_input[CONF_PASSWORD]
 
-            # Check if we can connect to the device
-            device = await MyPVLocalDevice(host, password)
+            device = MyPVLocalDevice(host, password)
             try:
                 if not await device.connect():
                     errors[CONF_BASE] = "cannot_connect"
@@ -201,14 +195,13 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(device.serial_number)
                 self._abort_if_unique_id_configured()
 
-                title = f"my-PV {device.model}"
+                title = f"my-PV {device.model} {device.serial_number[6:]}"
                 data = {
                     CONF_HOST: host,
                     CONF_PASSWORD: password,
                 }
                 return self.async_create_entry(title=title, data=data)
 
-        # Combine user input with schema.
         data_schema = self.add_suggested_values_to_schema(AUTH_SCHEMA, user_input or {})
 
         self.context.update(

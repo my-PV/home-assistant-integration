@@ -1,7 +1,6 @@
 """Creates Switch entities for the my-PV Home Assistant integration."""
 
-import logging
-from typing import Any
+from typing import Any, override
 
 from homeassistant.components.switch import (
     SwitchDeviceClass,
@@ -15,8 +14,6 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from . import MyPVConfigEntry
 from .const import DOMAIN, RESERVED_KEYS
 from .entity import MyPVSetupEntity
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -47,30 +44,18 @@ async def async_setup_entry(
 
 
 class MyPVSwitch(MyPVSetupEntity, SwitchEntity):
-    """Base my-PV Switch."""
+    """my-PV switch."""
 
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        if not self.coordinator.connected:
-            self._attr_available = False
-        else:
-            value = self.coordinator.get_setup_value(self.entity_description.key)
-            self._attr_is_on = bool(value) if value is not None else None
-            self._attr_available = value is not None
+    @property
+    @override
+    def is_on(self) -> bool | None:
+        """Return if the switch is on."""
+        value = self.coordinator.get_setup_value(self.entity_description.key)
+        return bool(value) if value is not None else None
 
-        self.async_write_ha_state()
-
-    # @property
-    # def is_on(self) -> bool | None:
-    #     """Return if the switch is on."""
-    #     value = self.coordinator.get_setup_value(self.entity_description.key)
-    #     return bool(value) if value is not None else None
-
+    @override
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
-        _LOGGER.debug("Turning on %s", self.name)
-
         if await self.coordinator.set_setup_value(self.entity_description.key, True):
             self._attr_is_on = True
             self.async_write_ha_state()
@@ -79,10 +64,9 @@ class MyPVSwitch(MyPVSetupEntity, SwitchEntity):
                 translation_domain=DOMAIN, translation_key="unknown_error"
             )
 
+    @override
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
-        _LOGGER.debug("Turning off %s", self.name)
-
         if await self.coordinator.set_setup_value(self.entity_description.key, False):
             self._attr_is_on = False
             self.async_write_ha_state()

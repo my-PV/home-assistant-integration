@@ -1,7 +1,6 @@
 """Creates Sensor entities for the my-PV Home Assistant integration."""
 
-import logging
-from typing import Final
+from typing import Final, override
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -16,8 +15,6 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from . import MyPVConfigEntry
 from .const import RESERVED_KEYS
 from .entity import MyPVDataEntity
-
-_LOGGER = logging.getLogger(__name__)
 
 DEVICE_CLASSES: Final = {
     "curr_l2": SensorDeviceClass.CURRENT,
@@ -114,19 +111,8 @@ async def async_setup_entry(
 class MyPVSensor(MyPVDataEntity, SensorEntity):
     """Base my-PV Sensor."""
 
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        if not self.coordinator.connected:
-            self._attr_available = False
-        else:
-            value = self.coordinator.get_data_value(self.entity_description.key)
-            self._attr_native_value = value
-            self._attr_available = value is not None
-
-        self.async_write_ha_state()
-
-    # @property
-    # def native_value(self) -> Any:
-    #     """Return the value reported by the sensor."""
-    #     return self.coordinator.get_data_value(self.entity_description.key)
+    @property
+    @override
+    def native_value(self) -> Any:
+        """Return the value reported by the sensor."""
+        return self.coordinator.get_data_value(self.entity_description.key)

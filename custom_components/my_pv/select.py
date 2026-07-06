@@ -1,6 +1,6 @@
 """Creates Select entities for the my-PV Home Assistant integration."""
 
-import logging
+from typing import override
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.core import HomeAssistant, callback
@@ -10,8 +10,6 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from . import MyPVConfigEntry
 from .const import DOMAIN
 from .entity import MyPVSetupEntity
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -42,24 +40,18 @@ async def async_setup_entry(
 
 
 class MyPVSelect(MyPVSetupEntity, SelectEntity):
-    """Base my-PV Select."""
+    """my-PV select."""
 
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        if not self.coordinator.connected:
-            self._attr_available = False
-        else:
-            value = self.coordinator.get_setup_value(self.entity_description.key)
-            self._attr_current_option = str(value) if value is not None else None
-            self._attr_available = value is not None
+    @property
+    @override
+    def current_option(self) -> str | None:
+        """Return the selected entity option to represent the entity state."""
+        value = self.coordinator.get_setup_value(self.entity_description.key)
+        return str(value) if value is not None else None
 
-        self.async_write_ha_state()
-
+    @override
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        _LOGGER.debug("Setting %s", self.name)
-
         if await self.coordinator.set_setup_value(self.entity_description.key, option):
             self._attr_current_option = option
         else:

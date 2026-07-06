@@ -1,9 +1,7 @@
 """The my-PV integration for Home Assistant."""
 
-import logging
-
 from my_pv import MyPVLocalDevice
-from my_pv.exceptions import MyPVAuthenticationError, MyPVConnectionError
+from my_pv.exceptions import MyPVAuthenticationError
 
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, Platform
 from homeassistant.core import HomeAssistant
@@ -11,8 +9,6 @@ from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 
 from .const import DOMAIN
 from .coordinator import MyPVConfigEntry, MyPVCoordinator
-
-_LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
@@ -29,7 +25,7 @@ PLATFORMS: list[Platform] = [
 async def async_setup_entry(hass: HomeAssistant, entry: MyPVConfigEntry) -> bool:
     """Set up my-PV from a config entry."""
 
-    device = await MyPVLocalDevice(entry.data[CONF_HOST], entry.data.get(CONF_PASSWORD))
+    device = MyPVLocalDevice(entry.data[CONF_HOST], entry.data.get(CONF_PASSWORD))
 
     try:
         if not await device.connect():
@@ -39,25 +35,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyPVConfigEntry) -> bool
             )
     except MyPVAuthenticationError as exc:
         raise ConfigEntryAuthFailed from exc
-    except MyPVConnectionError as exc:
-        raise ConfigEntryNotReady(
-            translation_domain=DOMAIN,
-            translation_key="cannot_connect",
-        ) from exc
 
-    # Setup coordinator
     coordinator = MyPVCoordinator(hass, entry, device)
 
     try:
-        # Fetch initial data so we have data when entities subscribe
         await coordinator.async_config_entry_first_refresh()
-
-        entry.runtime_data = coordinator
-
-        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    except Exception:
+    except ConfigEntryNotReady, ConfigEntryAuthFailed:
         await coordinator.async_disconnect()
         raise
+
+    entry.runtime_data = coordinator
+
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
 
