@@ -2,7 +2,7 @@
 """Creates Button entities for the my-PV Home Assistant integration."""
 
 import logging
-from typing import Any, Final
+from typing import Any, Final, override
 
 from homeassistant.components.button import (
     ButtonDeviceClass,
@@ -67,23 +67,11 @@ async def async_setup_entry(
 class MyPVCommandButton(MyPVCommandEntity, ButtonEntity):
     """Base my-PV Button."""
 
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        if not self.coordinator.connected:
-            self._attr_available = False
-        else:
-            self._attr_available = True
-
-        self.async_write_ha_state()
-
+    @override
     async def async_press(self, **kwargs: Any) -> None:
         """Handle the button press."""
-        _LOGGER.debug("Pressing %s", self.name)
 
-        if not self.coordinator.connected:
+        if not self.coordinator.device.connected:
             self._attr_available = False
         elif await self.coordinator.send_command(self.entity_description.key):
             self._attr_available = True
-        else:
-            _LOGGER.error("Failed to press %s", self.name)

@@ -1,8 +1,7 @@
 # pylint: disable=duplicate-code
 """Creates Number entities for the my-PV Home Assistant integration."""
 
-import logging
-from typing import Final
+from typing import Final, override
 
 from homeassistant.components.number import (
     NumberDeviceClass,
@@ -15,8 +14,6 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from . import MyPVConfigEntry
 from .const import RESERVED_KEYS
 from .entity import MyPVSetupEntity
-
-_LOGGER = logging.getLogger(__name__)
 
 
 DEVICE_CLASSES: Final = {
@@ -60,28 +57,20 @@ async def async_setup_entry(
 
 
 class MyPVNumber(MyPVSetupEntity, NumberEntity):
-    """Base my-PV Number."""
+    """my-PV number."""
 
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        if not self.coordinator.connected:
-            self._attr_available = False
-        else:
-            value = self.coordinator.get_setup_value(self.entity_description.key)
-            self._attr_native_value = float(value) if value is not None else None
-            self._attr_available = value is not None
+    @property
+    @override
+    def native_value(self) -> float | None:
+        """Return the value reported by the number."""
+        value = self.coordinator.get_setup_value(self.entity_description.key)
+        return float(value) if value is not None else None
 
-        self.async_write_ha_state()
-
+    @override
     async def async_set_native_value(self, value: float) -> None:
         """Set new value."""
-        _LOGGER.debug("Setting %s", self.name)
-
-        if not self.coordinator.connected:
+        if not self.coordinator.device.connected:
             self._attr_available = False
         elif await self.coordinator.set_setup_value(self.entity_description.key, value):
             self._attr_available = True
             self._attr_native_value = value
-        else:
-            _LOGGER.error("Failed to set %s", self.name)

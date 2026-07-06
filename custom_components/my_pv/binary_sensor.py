@@ -1,7 +1,7 @@
 # pylint: disable=duplicate-code
 """Creates Binary Sensor entities for the my-PV Home Assistant integration."""
 
-import logging
+from typing import override
 
 from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
@@ -13,8 +13,6 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from . import MyPVConfigEntry
 from .const import RESERVED_KEYS
 from .entity import MyPVDataEntity
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -44,16 +42,11 @@ async def async_setup_entry(
 
 
 class MyPVBinarySensor(MyPVDataEntity, BinarySensorEntity):
-    """Base my-PV Sensor."""
+    """my-PV binary sensor."""
 
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        if not self.coordinator.connected:
-            self._attr_available = False
-        else:
-            value = self.coordinator.get_data_value(self.entity_description.key)
-            self._attr_is_on = bool(value) if value is not None else None
-            self._attr_available = value is not None
-
-        self.async_write_ha_state()
+    @property
+    @override
+    def is_on(self) -> bool | None:
+        """Return true if the binary sensor is on."""
+        value = self.coordinator.device.get_data_value(self.entity_description.key)
+        return bool(value) if value is not None else None
