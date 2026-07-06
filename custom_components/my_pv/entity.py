@@ -66,7 +66,10 @@ class MyPVDataEntity(MyPVBaseEntity):
         ):
             return False
         try:
-            if self.coordinator.device.get_data_value(self.entity_description.key) is None:
+            if (
+                self.coordinator.device.get_data_value(self.entity_description.key)
+                is None
+            ):
                 return False
         except MyPVNotSupportedError:
             return False
@@ -87,7 +90,10 @@ class MyPVSetupEntity(MyPVBaseEntity):
         ):
             return False
         try:
-            if self.coordinator.device.get_setup_value(self.entity_description.key) is None:
+            if (
+                self.coordinator.device.get_setup_value(self.entity_description.key)
+                is None
+            ):
                 return False
         except MyPVNotSupportedError:
             return False
