@@ -13,9 +13,9 @@ from homeassistant.components.update import (
 from homeassistant.components.update.const import UpdateEntityFeature
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import MyPVConfigEntry, MyPVCoordinator
+from .entity import MyPVCommandEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,15 +30,15 @@ async def async_setup_entry(
     entities = []
 
     if (
-        coordinator.supports_command("firmware_update")
-        and coordinator.supports_data("fwversion")
-        and coordinator.supports_data("fwversionlatest")
+        coordinator.device.supports_command("firmware_update")
+        and coordinator.device.supports_data("fwversion")
+        and coordinator.device.supports_data("fwversionlatest")
     ):
         download_command = None
-        if coordinator.supports_command("firmware_download"):
+        if coordinator.device.supports_command("firmware_download"):
             download_command = "firmware_download"
         update_percentage_key = None
-        if coordinator.supports_data("upd_percentage"):
+        if coordinator.device.supports_data("upd_percentage"):
             update_percentage_key = "upd_percentage"
         entity_description = MyPVUpdateEntityDescription(
             key="firmware",
@@ -64,18 +64,19 @@ async def async_setup_entry(
 class MyPVUpdateEntityDescription(UpdateEntityDescription, frozen_or_thawed=True):
     """A class that describes my-PV update entities."""
 
-    download_command: str = None
+    download_command: str | None = None
     install_command: str
     installed_version_key: str
     latest_version_key: str
-    update_percentage_key: str = None
+    update_percentage_key: str | None = None
 
 
-class MyPVCommandUpdate(CoordinatorEntity, UpdateEntity):
+class MyPVCommandUpdate(MyPVCommandEntity, UpdateEntity):
     """Base my-PV Update."""
 
-    _attr_has_entity_name = True
     _attr_available = False
+
+    entity_description: MyPVUpdateEntityDescription
 
     def __init__(
         self,
@@ -84,12 +85,7 @@ class MyPVCommandUpdate(CoordinatorEntity, UpdateEntity):
         serial_number: str,
     ) -> None:
         """Initialize the update."""
-        super().__init__(coordinator, entity_description.key)
-
-        self._attr_device_info = coordinator.device_info
-        self._attr_unique_id = f"{serial_number}-{entity_description.key}"
-
-        self.entity_description = entity_description
+        super().__init__(coordinator, entity_description, serial_number)
 
         if entity_description.install_command:
             self._attr_supported_features |= UpdateEntityFeature.INSTALL
@@ -115,10 +111,10 @@ class MyPVCommandUpdate(CoordinatorEntity, UpdateEntity):
         if not self.coordinator.device.connected:
             self._attr_available = False
         else:
-            installed_version = self.coordinator.get_data_value(
+            installed_version = self.coordinator.device.get_data_value(
                 self.entity_description.installed_version_key
             )
-            latest_version = self.coordinator.get_data_value(
+            latest_version = self.coordinator.device.get_data_value(
                 self.entity_description.latest_version_key
             )
 
@@ -131,7 +127,7 @@ class MyPVCommandUpdate(CoordinatorEntity, UpdateEntity):
                 self._attr_available = True
 
                 if self.in_progress and self.entity_description.update_percentage_key:
-                    self._attr_update_percentage = self.coordinator.get_data_value(
+                    self._attr_update_percentage = self.coordinator.device.get_data_value(
                         self.entity_description.update_percentage_key
                     )
 

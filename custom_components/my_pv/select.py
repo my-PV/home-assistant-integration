@@ -3,7 +3,7 @@
 from typing import override
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -21,7 +21,7 @@ async def async_setup_entry(
     coordinator = config_entry.runtime_data
     entities = []
 
-    config = coordinator.get_setup_configuration("bstmode")
+    config = coordinator.device.get_setup_configuration("bstmode")
     if config and config.get("type") == "enumeration":
         entity_description = SelectEntityDescription(
             key="bstmode",
@@ -46,7 +46,7 @@ class MyPVSelect(MyPVSetupEntity, SelectEntity):
     @override
     def current_option(self) -> str | None:
         """Return the selected entity option to represent the entity state."""
-        value = self.coordinator.get_setup_value(self.entity_description.key)
+        value = self.coordinator.device.get_setup_value(self.entity_description.key)
         return str(value) if value is not None else None
 
     @override

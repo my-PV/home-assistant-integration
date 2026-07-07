@@ -7,7 +7,7 @@ from homeassistant.components.switch import (
     SwitchEntity,
     SwitchEntityDescription,
 )
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -50,7 +50,7 @@ class MyPVSwitch(MyPVSetupEntity, SwitchEntity):
     @override
     def is_on(self) -> bool | None:
         """Return if the switch is on."""
-        value = self.coordinator.get_setup_value(self.entity_description.key)
+        value = self.coordinator.device.get_setup_value(self.entity_description.key)
         return bool(value) if value is not None else None
 
     @override
