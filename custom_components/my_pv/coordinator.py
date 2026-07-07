@@ -104,28 +104,12 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
             self._setup_configurations = self.device.get_setup_configurations().items()
         return self._setup_configurations
 
-    def get_setup_configuration(self, key: str) -> dict[str, Any] | None:
-        """Get setup configuration for given key."""
-        return self.device.get_setup_configuration(key)
-
-    def supports_data(self, key: str) -> bool:
-        """Test if data for the given key is supported."""
-        return self.device.supports_data(key)
-
     @property
     def data_configurations(self) -> ItemsView[str, Any]:
         """Get data configuration for given key."""
         if not self._data_configurations:
             self._data_configurations = self.device.get_data_configurations().items()
         return self._data_configurations
-
-    def get_data_configuration(self, key: str) -> dict[str, Any] | None:
-        """Get data configuration for given key."""
-        return self.device.get_data_configuration(key)
-
-    def supports_command(self, command: str) -> bool:
-        """Test if the given command is supported."""
-        return self.device.supports_command(command)
 
     @property
     def command_configurations(self) -> ItemsView[str, Any]:
@@ -163,10 +147,6 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
                 translation_placeholders={"uri": self.device.uri},
             ) from exc
 
-    def get_setup_value(self, key: str) -> bool | float | int | str | None:
-        """Get the setup value for the given key."""
-        return self.device.get_setup_value(key)
-
     @_my_pv_connection
     async def set_setup_value(self, key: str, value: bool | float | str) -> bool:
         """Set setup value for the given key."""
@@ -180,10 +160,6 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
         result = await self.device.set_target_temperature(temperature)
         self.async_update_listeners()
         return result
-
-    def get_data_value(self, key: str) -> bool | float | int | str | None:
-        """Get the data value for the given key."""
-        return self.device.get_data_value(key)
 
     @_my_pv_connection
     async def send_command(self, key, value: bool | float | str | None = None):

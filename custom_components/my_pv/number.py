@@ -8,7 +8,7 @@ from homeassistant.components.number import (
     NumberEntity,
     NumberEntityDescription,
 )
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import MyPVConfigEntry
@@ -63,7 +63,7 @@ class MyPVNumber(MyPVSetupEntity, NumberEntity):
     @override
     def native_value(self) -> float | None:
         """Return the value reported by the number."""
-        value = self.coordinator.get_setup_value(self.entity_description.key)
+        value = self.coordinator.device.get_setup_value(self.entity_description.key)
         return float(value) if value is not None else None
 
     @override
