@@ -4,7 +4,7 @@
 
 The **my-PV** integration is used to integrate with the devices of [my-PV](https://www.my-pv.com/). my-PV produces functional and innovative solutions for housing technology powered by solar electricity.
 
-We are working on bringing this integration into Home Assistant Core. Untill that's done this custom integration contains all te functionality that will be in the Core integration.
+We are working on bringing this integration into Home Assistant Core. Until that's done this custom integration contains all the functionality that will be in the Core integration.
 
 ## Supported devics
 
