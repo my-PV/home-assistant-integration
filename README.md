@@ -1,4 +1,4 @@
-# Official Home Assistant integration for my-PV
+# Official my-PV Home Assistant integration
 
 ## Introduction
 
