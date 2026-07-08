@@ -11,10 +11,11 @@ from homeassistant.components.button import (
 )
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import MyPVConfigEntry
-from .const import RESERVED_KEYS
+from .const import DOMAIN, RESERVED_KEYS
 from .entity import MyPVCommandEntity
 
 _LOGGER = logging.getLogger(__name__)

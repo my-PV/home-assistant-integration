@@ -56,7 +56,9 @@ class MyPVSwitch(MyPVSetupEntity, SwitchEntity):
     @override
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
-        if not await self.coordinator.set_setup_value(self.entity_description.key, True):
+        if not await self.coordinator.set_setup_value(
+            self.entity_description.key, True
+        ):
             raise HomeAssistantError(
                 translation_domain=DOMAIN, translation_key="unknown_error"
             )
@@ -64,7 +66,9 @@ class MyPVSwitch(MyPVSetupEntity, SwitchEntity):
     @override
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
-        if not await self.coordinator.set_setup_value(self.entity_description.key, False):
+        if not await self.coordinator.set_setup_value(
+            self.entity_description.key, False
+        ):
             raise HomeAssistantError(
                 translation_domain=DOMAIN, translation_key="unknown_error"
             )

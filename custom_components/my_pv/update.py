@@ -112,8 +112,10 @@ class MyPVCommandUpdate(MyPVCommandEntity, UpdateEntity):
                 self._attr_available = True
 
                 if self.in_progress and self.entity_description.update_percentage_key:
-                    self._attr_update_percentage = self.coordinator.device.get_data_value(
-                        self.entity_description.update_percentage_key
+                    self._attr_update_percentage = (
+                        self.coordinator.device.get_data_value(
+                            self.entity_description.update_percentage_key
+                        )
                     )
 
         self.async_write_ha_state()

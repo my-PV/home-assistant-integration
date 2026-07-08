@@ -9,10 +9,11 @@ from homeassistant.components.number import (
     NumberEntityDescription,
 )
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import MyPVConfigEntry
-from .const import RESERVED_KEYS
+from .const import DOMAIN, RESERVED_KEYS
 from .entity import MyPVSetupEntity
 
 
@@ -69,7 +70,9 @@ class MyPVNumber(MyPVSetupEntity, NumberEntity):
     @override
     async def async_set_native_value(self, value: float) -> None:
         """Set new value."""
-        if not await self.coordinator.set_setup_value(self.entity_description.key, value):
+        if not await self.coordinator.set_setup_value(
+            self.entity_description.key, value
+        ):
             raise HomeAssistantError(
                 translation_domain=DOMAIN, translation_key="unknown_error"
             )
