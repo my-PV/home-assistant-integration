@@ -71,7 +71,7 @@ class MyPVCommandButton(MyPVCommandEntity, ButtonEntity):
     async def async_press(self, **kwargs: Any) -> None:
         """Handle the button press."""
 
-        if not self.coordinator.device.connected:
-            self._attr_available = False
-        elif await self.coordinator.send_command(self.entity_description.key):
-            self._attr_available = True
+        if not await self.coordinator.send_command(self.entity_description.key):
+            raise HomeAssistantError(
+                translation_domain=DOMAIN, translation_key="unknown_error"
+            )

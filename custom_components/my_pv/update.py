@@ -74,8 +74,6 @@ class MyPVUpdateEntityDescription(UpdateEntityDescription, frozen_or_thawed=True
 class MyPVCommandUpdate(MyPVCommandEntity, UpdateEntity):
     """Base my-PV Update."""
 
-    _attr_available = False
-
     entity_description: MyPVUpdateEntityDescription
 
     def __init__(
@@ -91,19 +89,6 @@ class MyPVCommandUpdate(MyPVCommandEntity, UpdateEntity):
             self._attr_supported_features |= UpdateEntityFeature.INSTALL
         if entity_description.update_percentage_key:
             self._attr_supported_features |= UpdateEntityFeature.PROGRESS
-
-    async def async_added_to_hass(self) -> None:
-        await super().async_added_to_hass()
-
-        self._handle_coordinator_update()
-
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        if not self._attr_available:
-            return self._attr_available
-
-        return self.coordinator.last_update_success
 
     @callback
     def _handle_coordinator_update(self) -> None:

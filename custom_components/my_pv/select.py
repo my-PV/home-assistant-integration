@@ -52,9 +52,7 @@ class MyPVSelect(MyPVSetupEntity, SelectEntity):
     @override
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        if await self.coordinator.set_setup_value(self.entity_description.key, option):
-            self._attr_current_option = option
-        else:
+        if not await self.coordinator.set_setup_value(self.entity_description.key, option):
             raise HomeAssistantError(
                 translation_domain=DOMAIN, translation_key="unknown_error"
             )

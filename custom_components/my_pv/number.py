@@ -69,8 +69,7 @@ class MyPVNumber(MyPVSetupEntity, NumberEntity):
     @override
     async def async_set_native_value(self, value: float) -> None:
         """Set new value."""
-        if not self.coordinator.device.connected:
-            self._attr_available = False
-        elif await self.coordinator.set_setup_value(self.entity_description.key, value):
-            self._attr_available = True
-            self._attr_native_value = value
+        if not await self.coordinator.set_setup_value(self.entity_description.key, value):
+            raise HomeAssistantError(
+                translation_domain=DOMAIN, translation_key="unknown_error"
+            )
