@@ -26,16 +26,9 @@ The following devices are not supported by the integration:
 
 ### HACS
 
-The recommended way to install the **my-PV** Home Assistant integration is by using [HACS](https://hacs.xyz/).
 Click the following button to open the integration directly on the HACS integration page.
 
 [![Install my-PV from HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=my-PV&repository=home-assistant-integration&category=integration)
-
-Or follow these instructions:
-
-- Go to your **HACS** view in Home Assistant and search for *my-PV*
-- Select **Download**
-- Restart Home Assistant
 
 ### Manual installation
 
@@ -67,7 +60,3 @@ You can update the password through the web interface of your **my-PV** device.
 ## Data updates
 
 The **my-PV** integration polls data every 5 seconds.
-
-## Supported functionality
-
-To do...
