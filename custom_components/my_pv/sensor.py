@@ -17,6 +17,7 @@ from .const import RESERVED_KEYS
 from .entity import MyPVDataEntity
 
 DEVICE_CLASSES: Final = {
+    "curr_l1": SensorDeviceClass.CURRENT,
     "curr_l2": SensorDeviceClass.CURRENT,
     "curr_l3": SensorDeviceClass.CURRENT,
     "curr_mains": SensorDeviceClass.CURRENT,
@@ -32,9 +33,13 @@ DEVICE_CLASSES: Final = {
     "temp3": SensorDeviceClass.TEMPERATURE,
     "temp4": SensorDeviceClass.TEMPERATURE,
     "uptime": SensorDeviceClass.DURATION,
+    "volt_l1": SensorDeviceClass.VOLTAGE,
     "volt_l2": SensorDeviceClass.VOLTAGE,
     "volt_l3": SensorDeviceClass.VOLTAGE,
     "volt_mains": SensorDeviceClass.VOLTAGE,
+    "volt_mains_l1": SensorDeviceClass.VOLTAGE,
+    "volt_mains_l2": SensorDeviceClass.VOLTAGE,
+    "volt_mains_l3": SensorDeviceClass.VOLTAGE,
     "wifi_signal": SensorDeviceClass.SIGNAL_STRENGTH,
     "wifi_signal_strength": SensorDeviceClass.SIGNAL_STRENGTH,
 }
@@ -43,9 +48,13 @@ ENTITY_CATEGORIES: Final = {
     "cur_eth_mode": EntityCategory.DIAGNOSTIC,
     "freq": EntityCategory.DIAGNOSTIC,
     "uptime": EntityCategory.DIAGNOSTIC,
+    "volt_l1": EntityCategory.DIAGNOSTIC,
     "volt_l2": EntityCategory.DIAGNOSTIC,
     "volt_l3": EntityCategory.DIAGNOSTIC,
     "volt_mains": EntityCategory.DIAGNOSTIC,
+    "volt_mains_l1": EntityCategory.DIAGNOSTIC,
+    "volt_mains_l2": EntityCategory.DIAGNOSTIC,
+    "volt_mains_l3": EntityCategory.DIAGNOSTIC,
     "wifi_signal": EntityCategory.DIAGNOSTIC,
     "wifi_signal_strength": EntityCategory.DIAGNOSTIC,
 }
@@ -80,13 +89,27 @@ async def async_setup_entry(
 
             entity_category = ENTITY_CATEGORIES.get(key)
 
-            translation_key = key
+            translation_key: str | None = key
             if key == "curr_mains" and coordinator.device.supports_data("curr_l2"):
                 translation_key = "curr_l1"
+            elif key == "curr_l1" and not coordinator.device.supports_data("curr_l2"):
+                translation_key = None
             elif key == "volt_mains" and coordinator.device.supports_data("volt_l2"):
                 translation_key = "volt_l1"
+            elif key == "volt_l1" and not coordinator.device.supports_data("volt_l2"):
+                translation_key = None
+            elif key == "volt_mains" and coordinator.device.supports_data(
+                "volt_mains_l2"
+            ):
+                translation_key = "volt_mains_l1"
+            elif key == "volt_mains_l1" and not coordinator.device.supports_data(
+                "volt_mains_l2"
+            ):
+                translation_key = None
             elif key == "temp1" and not coordinator.device.supports_data("temp2"):
-                translation_key = "temp"
+                translation_key = None
+            elif key in ("curr_mains", "power_grid", "volt_mains"):
+                translation_key = None
 
             entity_description = SensorEntityDescription(
                 key=key,

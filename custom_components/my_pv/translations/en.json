@@ -160,6 +160,15 @@
             "volt_l3": {
                 "name": "Voltage phase L3"
             },
+            "volt_mains_l1": {
+            	"name": "Voltage phase L1"
+            },
+            "volt_mains_l2": {
+            	"name": "Voltage phase L2"
+            },
+            "volt_mains_l3": {
+            	"name": "Voltage phase L3"
+            },
             "wifi_signal": {
                 "name": "Wi-Fi Signal Strength",
                 "state": {
