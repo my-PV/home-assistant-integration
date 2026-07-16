@@ -102,10 +102,6 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
         self._abort_if_unique_id_configured(updates={CONF_HOST: self._host})
 
         self._device_model = device.model
-        if password_needed:
-            return await self.async_step_discovery_auth()
-
-        _LOGGER.debug("my-PV on %s is not yet configured", self._host)
         self.context.update(
             {
                 "title_placeholders": {
@@ -113,6 +109,11 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
                 }
             }
         )
+
+        if password_needed:
+            return await self.async_step_discovery_auth()
+
+        _LOGGER.debug("my-PV on %s is not yet configured", self._host)
 
         self._set_confirm_only()
         return self.async_show_form(
@@ -148,7 +149,13 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
 
             if not errors and password_needed:
                 self._host = host
-                self._device_model = device.model
+                self.context.update(
+                    {
+                        "title_placeholders": {
+                            "name": f"my-PV {device.model}",
+                        }
+                    }
+                )
                 return await self.async_step_auth()
 
             if not errors:
@@ -192,25 +199,25 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
                 await device.disconnect()
 
             if not errors:
-                await self.async_set_unique_id(device.serial_number)
-                self._abort_if_unique_id_configured()
+                if self._reauth_entry:
+                    data = {
+                        CONF_PASSWORD: password,
+                    }
+                    return self.async_update_reload_and_abort(
+                        self._reauth_entry, data_updates=data
+                    )
+                else:
+                    await self.async_set_unique_id(device.serial_number)
+                    self._abort_if_unique_id_configured()
 
-                title = f"my-PV {device.model} {device.serial_number[6:]}"
-                data = {
-                    CONF_HOST: host,
-                    CONF_PASSWORD: password,
-                }
-                return self.async_create_entry(title=title, data=data)
+                    title = f"my-PV {device.model} {device.serial_number[6:]}"
+                    data = {
+                        CONF_HOST: host,
+                        CONF_PASSWORD: password,
+                    }
+                    return self.async_create_entry(title=title, data=data)
 
         data_schema = self.add_suggested_values_to_schema(AUTH_SCHEMA, user_input or {})
-
-        self.context.update(
-            {
-                "title_placeholders": {
-                    "name": f"my-PV {self._device_model}",
-                }
-            }
-        )
 
         return self.async_show_form(
             step_id=step_id,
