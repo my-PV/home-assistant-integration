@@ -187,11 +187,17 @@
         }
     },
     "exceptions": {
+        "auth_error": {
+            "message": "Authentication failed, please reauthenticate."
+        },
         "cannot_connect": {
             "message": "Failed to connect"
         },
         "device_unavailable": {
             "message": "Device on {uri} is unavailable"
+        },
+        "fetch_failed": {
+            "message": "Failed to fetch data."
         },
         "unknown_error": {
             "message": "Unknown error."

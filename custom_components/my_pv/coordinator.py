@@ -34,7 +34,10 @@ def _my_pv_connection[T](
 
             return await func(self, *args, **kwargs)
         except MyPVAuthenticationError as exc:
-            raise ConfigEntryAuthFailed from exc
+            raise ConfigEntryAuthFailed(
+                translation_domain=DOMAIN,
+                translation_key="auth_error",
+            ) from exc
         except MyPVConnectionError as exc:
             raise HomeAssistantError(
                 translation_domain=DOMAIN,
@@ -64,6 +67,7 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
         device: MyPVDevice,
     ) -> None:
         """Initialize my-PV Data Update Coordinator."""
+        assert device.serial_number
         super().__init__(
             hass,
             _LOGGER,
@@ -123,7 +127,7 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
     async def async_disconnect(self) -> bool:
         """Disconnect from my-PV.
 
-        To be called when coordinator is unloaded, e.g. when device is removed or HA is shutdown.
+        To be called when coordinator is unloaded, e.g. when device is removed or HA is shut down.
         """
         return await self.device.disconnect()
 
@@ -137,9 +141,16 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
                     translation_key="cannot_connect",
                 )
 
-            await self.device.fetch_data()
+            if not await self.device.fetch_data():
+                raise UpdateFailed(
+                    translation_domain=DOMAIN,
+                    translation_key="fetch_failed",
+                )
         except MyPVAuthenticationError as exc:
-            raise ConfigEntryAuthFailed from exc
+            raise ConfigEntryAuthFailed(
+                translation_domain=DOMAIN,
+                translation_key="auth_error",
+            ) from exc
         except MyPVConnectionError as exc:
             raise UpdateFailed(
                 translation_domain=DOMAIN,
