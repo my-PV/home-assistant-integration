@@ -49,11 +49,6 @@ class MyPVCommandEntity(MyPVBaseEntity):
             or self.coordinator.device.is_on is None
         ):
             return False
-        try:
-            if self.coordinator.device.get_data_value(self.entity_description.key) is None:
-                return False
-        except MyPVNotSupportedError:
-            return False
 
         return super().available
 
