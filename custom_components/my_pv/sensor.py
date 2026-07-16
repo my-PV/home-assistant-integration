@@ -111,6 +111,13 @@ async def async_setup_entry(
             elif key in ("curr_mains", "power_grid", "volt_mains"):
                 translation_key = None
 
+            suggested_display_precision = None
+            divider = config.get("divider")
+            if divider == 10:
+                suggested_display_precision = 1
+            elif divider:
+                suggested_display_precision = 2
+
             entity_description = SensorEntityDescription(
                 key=key,
                 device_class=device_class,
@@ -119,6 +126,7 @@ async def async_setup_entry(
                 native_unit_of_measurement=config.get("unit"),
                 options=options,
                 state_class=state_class,
+                suggested_display_precision=suggested_display_precision,
             )
             entities.append(
                 MyPVSensor(
