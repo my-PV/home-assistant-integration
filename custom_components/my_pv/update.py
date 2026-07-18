@@ -1,9 +1,8 @@
 # pylint: disable=duplicate-code
 """Creates Update entities for the my-PV Home Assistant integration."""
 
-import asyncio
 import logging
-from typing import Any
+from typing import Any, override
 
 from homeassistant.components.update import (
     UpdateDeviceClass,
@@ -30,28 +29,15 @@ async def async_setup_entry(
     entities = []
 
     if (
-        coordinator.device.supports_command("firmware_update")
-        and coordinator.device.supports_data("fwversion")
-        and coordinator.device.supports_data("fwversionlatest")
+        coordinator.device.firmware_version
+        and coordinator.device.latest_firmware_version
     ):
-        download_command = None
-        if coordinator.device.supports_command("firmware_download"):
-            download_command = "firmware_download"
-        update_percentage_key = None
-        if coordinator.device.supports_data("upd_percentage"):
-            update_percentage_key = "upd_percentage"
-        entity_description = MyPVUpdateEntityDescription(
-            key="firmware",
-            translation_key="firmware",
+        entity_description = UpdateEntityDescription(
+            key="firmware_update",
             device_class=UpdateDeviceClass.FIRMWARE,
-            download_command=download_command,
-            install_command="firmware_update",
-            installed_version_key="fwversion",
-            latest_version_key="fwversionlatest",
-            update_percentage_key=update_percentage_key,
         )
         entities.append(
-            MyPVCommandUpdate(
+            MyPVFirmwareUpdate(
                 coordinator,
                 entity_description,
                 coordinator.device.serial_number,
@@ -61,98 +47,62 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class MyPVUpdateEntityDescription(UpdateEntityDescription, frozen_or_thawed=True):
-    """A class that describes my-PV update entities."""
-
-    download_command: str | None = None
-    install_command: str
-    installed_version_key: str
-    latest_version_key: str
-    update_percentage_key: str | None = None
-
-
-class MyPVCommandUpdate(MyPVCommandEntity, UpdateEntity):
+class MyPVFirmwareUpdate(MyPVCommandEntity, UpdateEntity):
     """Base my-PV Update."""
-
-    entity_description: MyPVUpdateEntityDescription
 
     def __init__(
         self,
         coordinator: MyPVCoordinator,
-        entity_description: MyPVUpdateEntityDescription,
+        entity_description: UpdateEntityDescription,
         serial_number: str,
     ) -> None:
         """Initialize the update."""
         super().__init__(coordinator, entity_description, serial_number)
 
-        if entity_description.install_command:
-            self._attr_supported_features |= UpdateEntityFeature.INSTALL
-        if entity_description.update_percentage_key:
+        self._attr_supported_features |= UpdateEntityFeature.INSTALL
+        if coordinator.device.firmware_update_progress is not None:
             self._attr_supported_features |= UpdateEntityFeature.PROGRESS
 
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        if not self.coordinator.device.connected:
-            self._attr_available = False
-        else:
-            installed_version = self.coordinator.device.get_data_value(
-                self.entity_description.installed_version_key
-            )
-            latest_version = self.coordinator.device.get_data_value(
-                self.entity_description.latest_version_key
-            )
+        self._attr_installed_version = self.coordinator.device.firmware_version
+        self._attr_latest_version = self.coordinator.device.latest_firmware_version
 
-            if None in [installed_version, latest_version]:
-                self._attr_available = False
-            else:
-                self._attr_installed_version = installed_version
-                self._attr_latest_version = latest_version
-
-                self._attr_available = True
-
-                if self.in_progress and self.entity_description.update_percentage_key:
-                    self._attr_update_percentage = (
-                        self.coordinator.device.get_data_value(
-                            self.entity_description.update_percentage_key
-                        )
-                    )
-
-        self.async_write_ha_state()
-
+    @override
     async def async_install(
         self, version: str | None, backup: bool, **kwargs: Any
     ) -> None:
-        """Install an update.
+        """Install an update."""
+        self._attr_in_progress = True
+        self._attr_update_percentage = 0
+        self.async_write_ha_state()
 
-        Version can be specified to install a specific version. When `None`, the
-        latest version needs to be installed.
+        try:
+            if await self.coordinator.device.update_firmware():
+                self._attr_installed_version = self._attr_latest_version
+        finally:
+            self._attr_in_progress = False
+            self._attr_update_percentage = None
+            self.async_write_ha_state()
 
-        The backup parameter indicates a backup should be taken before
-        installing the update.
-        """
-        _LOGGER.error("Updating %s", self.name)
-        if not self.coordinator.device.connected:
-            self._attr_available = False
+    @override
+    def version_is_newer(self, latest_version: str, installed_version: str) -> bool:
+        """Return True if latest_version is newer than installed_version."""
+        return self.coordinator.device.firmware_update_available
+
+    @callback
+    @override
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        _LOGGER.debug("MyPVFirmwareUpdate._handle_coordinator_update")
+        self._attr_installed_version = self.coordinator.device.firmware_version
+        self._attr_latest_version = self.coordinator.device.latest_firmware_version
+
+        if (
+            update_progress := self.coordinator.device.firmware_update_progress
+        ) is not None:
+            self._attr_in_progress = True
+            self._attr_update_percentage = update_progress
         else:
-            if (
-                self.entity_description.download_command
-                and await self.coordinator.send_command(
-                    self.entity_description.download_command
-                )
-            ):
-                self._attr_in_progress = True
-                self._attr_update_percentage = 0
-
-                # ToDO implement timeout
-                while True:
-                    if self.update_percentage == 100:
-                        break
-
-                    await asyncio.sleep(1)
-
-            await self.coordinator.send_command(self.entity_description.install_command)
-
-            await self.coordinator.reload_config()
+            self._attr_in_progress = False
+            self._attr_update_percentage = None
 
         self.async_write_ha_state()
