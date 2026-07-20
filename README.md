@@ -26,11 +26,11 @@ The following devices are not supported by the integration:
 
 ## Installation
 
-### HACS
+Click the following button to install the integration directly on your Home Assistant.
 
-Click the following button to open the integration directly on the HACS integration page.
+[![Install official my-PV integration.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=my-PV&repository=home-assistant-integration&category=integration)
 
-[![Install my-PV from HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=my-PV&repository=home-assistant-integration&category=integration)
+You need HACS installed to make the button work.
 
 ### Manual installation
 
