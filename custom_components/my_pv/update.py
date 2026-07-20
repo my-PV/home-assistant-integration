@@ -50,6 +50,10 @@ async def async_setup_entry(
 class MyPVFirmwareUpdate(MyPVCommandEntity, UpdateEntity):
     """Base my-PV Update."""
 
+    _attr_supported_features = (
+        UpdateEntityFeature.INSTALL | UpdateEntityFeature.PROGRESS
+    )
+
     def __init__(
         self,
         coordinator: MyPVCoordinator,
@@ -58,10 +62,6 @@ class MyPVFirmwareUpdate(MyPVCommandEntity, UpdateEntity):
     ) -> None:
         """Initialize the update."""
         super().__init__(coordinator, entity_description, serial_number)
-
-        self._attr_supported_features |= UpdateEntityFeature.INSTALL
-        if coordinator.device.firmware_update_progress is not None:
-            self._attr_supported_features |= UpdateEntityFeature.PROGRESS
 
         self._attr_installed_version = self.coordinator.device.firmware_version
         self._attr_latest_version = self.coordinator.device.latest_firmware_version
