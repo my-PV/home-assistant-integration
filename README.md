@@ -8,13 +8,15 @@ We are working on bringing this integration into Home Assistant Core. Until that
 
 We're looking forward to hear your experience with the integration, please [create an issue](https://github.com/my-PV/home-assistant-integration/issues) with your feedback and findings.
 
-## Supported devics
+## Supported devices
 
 The following devices are supported by this integration:
 - AC ELWA 2
 - AC•THOR range
 - HEA•THOR IoT
 - SOL•THOR
+
+You need **Home Assistant 2026.5** or later for this integration.
 
 ## Unsupported devices
 
