@@ -73,7 +73,7 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
             _LOGGER,
             name=DOMAIN,
             config_entry=config_entry,
-            update_interval=timedelta(seconds=5),
+            update_interval=timedelta(seconds=10),
             always_update=True,
         )
 
