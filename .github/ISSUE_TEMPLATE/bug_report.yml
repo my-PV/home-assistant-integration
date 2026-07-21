@@ -92,37 +92,35 @@ body:
     attributes:
       label: Debug logging
       description: >
-        To enable debug logging go to the official my-PV integration, Settings > Devices & services -> my-PV
-        Click the 3-dot menu on the top right and Enable debug logging.
-        
+        To enable debug logging go to the official my-PV integration, Settings > Devices & services -> my-PV. Click the 3-dot menu on the top right and Enable debug logging.
+
         Reproduce the problem and disable debug logging.
-        
+
         Add the contents of the resulting logfile to this issue.
-      render: txt
   - type: textarea
     attributes:
       label: Device setup.jsn
       description: >
         For better understanding of your problem the raw `setup.jsn` file can be usefull.
-        
+
         Go to your device and add `/setup.jsn` to to the url.
-        
+
         `http(s)://<IP Address>/setup.jsn`
-        
+
         Add the contents of the file to this issue.
-      render: txt
+      render: json
   - type: textarea
     attributes:
       label: Device data.jsn
       description: >
         For better understanding of your problem the raw `data.jsn` file can be usefull. 
-        
+
         Go to your device and add `/data.jsn` to to the url.
-        
+
         `http(s)://<IP Address>/data.jsn`
-        
+
         Add the contents of the file to this issue.
-      render: txt
+      render: json
   - type: textarea
     attributes:
       label: Additional information
