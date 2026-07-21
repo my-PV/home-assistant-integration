@@ -92,7 +92,6 @@ class MyPVFirmwareUpdate(MyPVCommandEntity, UpdateEntity):
     @override
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        _LOGGER.debug("MyPVFirmwareUpdate._handle_coordinator_update")
         self._attr_installed_version = self.coordinator.device.firmware_version
         self._attr_latest_version = self.coordinator.device.latest_firmware_version
 
