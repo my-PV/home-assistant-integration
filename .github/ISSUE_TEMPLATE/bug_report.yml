@@ -1,0 +1,101 @@
+name: Report an issue with the official my-PV Home Assistant integration
+description: Report an issue with the official my-PV Home Assistant integration
+body:
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: The problem
+      description: >-
+        Describe the issue you are experiencing here, to communicate to the
+        maintainers. Tell us what you were trying to do and what happened.
+
+        Provide a clear and concise description of what the problem is.
+  - type: markdown
+    attributes:
+      value: |
+        ## Device
+  - type: input
+    id: device_model
+    validations:
+      required: true
+    attributes:
+      label: Which my-PV device are you using??
+  - type: input
+    id: device_serial
+    validations:
+      required: true
+    attributes:
+      label: What are the first 6 numbers of the serial number?
+  - type: input
+    id: firmware_version
+    validations:
+      required: true
+    attributes:
+      label: What is the firmware version of the device?
+  - type: markdown
+    attributes:
+      value: |
+        ## Environment
+  - type: input
+    id: integration_version
+    validations:
+      required: true
+    attributes:
+      label: What version of the my-PV Home Assistant integration has the issue?
+      description: >
+        Can be found in: [Settings ⇒ Devices & services ⇒ my-PV](https://my.home-assistant.io/redirect/integration/?domain=my_pv).
+
+        [![Open your Home Assistant instance and show the my-PV integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=my_pv)
+  - type: input
+    attributes:
+      label: What was the last working version of the my-PV Home Assistant integration?
+      placeholder: core-
+      description: >
+        If known, otherwise leave blank.
+  - type: input
+    id: core_version
+    validations:
+      required: true
+    attributes:
+      label: What version of Home Assistant Core has the issue?
+      placeholder: core-
+      description: >
+        Can be found in: [Settings ⇒ System ⇒ Repairs ⇒ Three Dots in Upper Right ⇒ System information](https://my.home-assistant.io/redirect/system_health/).
+
+        [![Open your Home Assistant instance and show the system information.](https://my.home-assistant.io/badges/system_health.svg)](https://my.home-assistant.io/redirect/system_health/)
+  - type: input
+    attributes:
+      label: What was the last working version of Home Assistant Core?
+      placeholder: core-
+      description: >
+        If known, otherwise leave blank.
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: What type of installation are you running?
+      description: >
+        Can be found in: [Settings ⇒ System ⇒ Repairs ⇒ Three Dots in Upper Right ⇒ System information](https://my.home-assistant.io/redirect/system_health/).
+
+        [![Open your Home Assistant instance and show the system information.](https://my.home-assistant.io/badges/system_health.svg)](https://my.home-assistant.io/redirect/system_health/)
+      options:
+        - Home Assistant OS
+        - Home Assistant Container
+        - Home Assistant Supervised
+        - Home Assistant Core
+
+  - type: markdown
+    attributes:
+      value: |
+        # Details
+  - type: textarea
+    attributes:
+      label: Anything in the logs that might be useful for us?
+      description: For example, error message, or stack traces.
+      render: txt
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: >
+        If you have any additional information for us, use the field below.
