@@ -61,4 +61,4 @@ You can update the password through the web interface of your **my-PV** device.
 
 ## Data updates
 
-The **my-PV** integration polls data every 10 seconds.
+The **my-PV** integration polls data every 5 seconds.
