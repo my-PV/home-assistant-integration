@@ -7,7 +7,11 @@ import logging
 from typing import Any, Final, override
 
 from my_pv import MyPVDevice
-from my_pv.exceptions import MyPVAuthenticationError, MyPVConnectionError
+from my_pv.exceptions import (
+    MyPVAuthenticationError,
+    MyPVConnectionError,
+    MyPVTooManyRequestsError,
+)
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -146,6 +150,11 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
                     translation_domain=DOMAIN,
                     translation_key="fetch_failed",
                 )
+        except MyPVTooManyRequestsError:
+            # Keep using the old data when the device is rate limiting.
+            # Don't raise an UpdateFailed error since this will make the device unavailable.
+            self.update_interval = timedelta(seconds=10)
+            pass
         except MyPVAuthenticationError as exc:
             raise ConfigEntryAuthFailed(
                 translation_domain=DOMAIN,
