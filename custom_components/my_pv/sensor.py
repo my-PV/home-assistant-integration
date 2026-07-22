@@ -40,6 +40,7 @@ DEVICE_CLASSES: Final = {
     "volt_mains_l1": SensorDeviceClass.VOLTAGE,
     "volt_mains_l2": SensorDeviceClass.VOLTAGE,
     "volt_mains_l3": SensorDeviceClass.VOLTAGE,
+    "volt_solar": SensorDeviceClass.VOLTAGE,
     "wifi_signal": SensorDeviceClass.SIGNAL_STRENGTH,
     "wifi_signal_strength": SensorDeviceClass.SIGNAL_STRENGTH,
 }
@@ -55,6 +56,7 @@ ENTITY_CATEGORIES: Final = {
     "volt_mains_l1": EntityCategory.DIAGNOSTIC,
     "volt_mains_l2": EntityCategory.DIAGNOSTIC,
     "volt_mains_l3": EntityCategory.DIAGNOSTIC,
+    "volt_solar": EntityCategory.DIAGNOSTIC,
     "wifi_signal": EntityCategory.DIAGNOSTIC,
     "wifi_signal_strength": EntityCategory.DIAGNOSTIC,
 }

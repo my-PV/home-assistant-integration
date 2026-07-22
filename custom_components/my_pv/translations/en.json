@@ -179,6 +179,9 @@
             "volt_mains_l3": {
             	"name": "Voltage phase L3"
             },
+            "volt_solar": {
+            	"name": "PV Voltage"
+            },
             "wifi_signal": {
                 "name": "Wi-Fi Signal Strength",
                 "state": {
