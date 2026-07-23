@@ -131,6 +131,9 @@
             "freq": {
                 "name": "Mains Frequency"
             },
+            "power_solar": {
+                "name": "PV Power"
+            },
             "screen_mode_flag": {
                 "name": "Device Status",
                 "state": {

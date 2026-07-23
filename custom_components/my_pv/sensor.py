@@ -27,6 +27,7 @@ DEVICE_CLASSES: Final = {
     "power_act": SensorDeviceClass.POWER,
     "power_elwa2": SensorDeviceClass.POWER,
     "power_grid": SensorDeviceClass.POWER,
+    "power_solar": SensorDeviceClass.POWER,
     "soc": SensorDeviceClass.BATTERY,
     "temp1": SensorDeviceClass.TEMPERATURE,
     "temp2": SensorDeviceClass.TEMPERATURE,
