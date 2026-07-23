@@ -183,39 +183,37 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            if self._reauth_entry:
-                host = self._reauth_entry.data[CONF_HOST]
-            else:
-                host = self._host
-            password = user_input[CONF_PASSWORD]
+            host = self._host
+            password = user_input.get(CONF_PASSWORD)
 
-            device = MyPVLocalDevice(host, password)
-            try:
-                if not await device.connect():
-                    errors[CONF_BASE] = "cannot_connect"
-            except MyPVAuthenticationError:
-                errors[CONF_PASSWORD] = "invalid_password"
-            finally:
-                await device.disconnect()
+            if password:
+                device = MyPVLocalDevice(host, password)
+                try:
+                    if not await device.connect():
+                        errors[CONF_BASE] = "cannot_connect"
+                except MyPVAuthenticationError:
+                    errors[CONF_PASSWORD] = "invalid_password"
+                finally:
+                    await device.disconnect()
 
-            if not errors:
-                if self._reauth_entry:
-                    data = {
-                        CONF_PASSWORD: password,
-                    }
-                    return self.async_update_reload_and_abort(
-                        self._reauth_entry, data_updates=data
-                    )
-                else:
-                    await self.async_set_unique_id(device.serial_number)
-                    self._abort_if_unique_id_configured()
+                if not errors:
+                    if self._reauth_entry:
+                        data = {
+                            CONF_PASSWORD: password,
+                        }
+                        return self.async_update_reload_and_abort(
+                            self._reauth_entry, data_updates=data
+                        )
+                    else:
+                        await self.async_set_unique_id(device.serial_number)
+                        self._abort_if_unique_id_configured()
 
-                    title = f"my-PV {device.model} {device.serial_number[6:]}"
-                    data = {
-                        CONF_HOST: host,
-                        CONF_PASSWORD: password,
-                    }
-                    return self.async_create_entry(title=title, data=data)
+                        title = f"my-PV {device.model} {device.serial_number[6:]}"
+                        data = {
+                            CONF_HOST: host,
+                            CONF_PASSWORD: password,
+                        }
+                        return self.async_create_entry(title=title, data=data)
 
         data_schema = self.add_suggested_values_to_schema(AUTH_SCHEMA, user_input or {})
 
@@ -230,9 +228,11 @@ class MyPVConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Perform reauth upon an authentication error."""
-        self._reauth_entry = self.hass.config_entries.async_get_entry(
-            self.context["entry_id"]
-        )
+        if user_input and CONF_HOST in user_input:
+            _LOGGER.debug("Reauthentication needed for my-PV device")
+            self._host = user_input[CONF_HOST]
+            self._reauth_entry = self.hass.config_entries.async_get_entry(
+                self.context["entry_id"]
+            )
 
-        _LOGGER.debug("Reauthentication needed for my-PV device")
         return await self.async_step_auth(user_input, "reauth")
