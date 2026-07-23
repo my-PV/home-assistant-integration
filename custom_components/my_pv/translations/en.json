@@ -7,7 +7,7 @@
         "abort": {
             "already_configured": "Device is already configured",
             "cannot_connect": "Failed to connect",
-        	"reauth_successful": "Re-authentication was successful"
+            "reauth_successful": "Re-authentication was successful"
         },
         "error": {
             "cannot_connect": "Failed to connect",
@@ -146,8 +146,8 @@
                     "6": "Block active"
                 }
             },
-            "soc": {
-                "name": "Boiler State of Charge"
+            "temp_ps": {
+                "name": "Device temperature"
             },
             "temp1": {
                 "name": "Temperature 1"
@@ -173,17 +173,8 @@
             "volt_l3": {
                 "name": "Voltage phase L3"
             },
-            "volt_mains_l1": {
-            	"name": "Voltage phase L1"
-            },
-            "volt_mains_l2": {
-            	"name": "Voltage phase L2"
-            },
-            "volt_mains_l3": {
-            	"name": "Voltage phase L3"
-            },
             "volt_solar": {
-            	"name": "PV Voltage"
+                "name": "PV Voltage"
             },
             "wifi_signal": {
                 "name": "Wi-Fi Signal Strength",
