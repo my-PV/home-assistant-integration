@@ -169,9 +169,10 @@ async def async_setup_entry(
                 "curr_l1",
             ) and not coordinator.device.supports_data("curr_l2"):
                 translation_key = None
-            elif key in ("volt_mains", "volt_l1") and not (
-                coordinator.device.supports_data("volt_l2"),
-                coordinator.device.supports_data("volt_mains_l2"),
+            elif (
+                key in ("volt_mains", "volt_l1")
+                and not coordinator.device.supports_data("volt_l2")
+                and not coordinator.device.supports_data("volt_mains_l2")
             ):
                 translation_key = None
             elif key == "temp1" and not coordinator.device.supports_data("temp2"):
