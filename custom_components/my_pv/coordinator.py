@@ -152,7 +152,11 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
                 )
         except MyPVTooManyRequestsError:
             # Keep using the old data when the device is rate limiting.
-            # Don't raise an UpdateFailed error since this will make the device unavailable.
+            # Don't raise an UpdateFailed error since this will make the device unavailable but
+            # reduce the update interval to 10 seconds.
+            _LOGGER.info(
+                "Device is rate limiting, reducing update interval to 10 seconds"
+            )
             self.update_interval = timedelta(seconds=10)
             pass
         except MyPVAuthenticationError as exc:
