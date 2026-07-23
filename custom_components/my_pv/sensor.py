@@ -13,54 +13,126 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import MyPVConfigEntry
-from .const import RESERVED_KEYS
 from .entity import MyPVDataEntity
 
-DEVICE_CLASSES: Final = {
-    "curr_l1": SensorDeviceClass.CURRENT,
-    "curr_l2": SensorDeviceClass.CURRENT,
-    "curr_l3": SensorDeviceClass.CURRENT,
-    "curr_mains": SensorDeviceClass.CURRENT,
-    "freq": SensorDeviceClass.FREQUENCY,
-    "power": SensorDeviceClass.POWER,
-    "power_ac9": SensorDeviceClass.POWER,
-    "power_act": SensorDeviceClass.POWER,
-    "power_elwa2": SensorDeviceClass.POWER,
-    "power_grid": SensorDeviceClass.POWER,
-    "soc": SensorDeviceClass.BATTERY,
-    "temp1": SensorDeviceClass.TEMPERATURE,
-    "temp2": SensorDeviceClass.TEMPERATURE,
-    "temp3": SensorDeviceClass.TEMPERATURE,
-    "temp4": SensorDeviceClass.TEMPERATURE,
-    "uptime": SensorDeviceClass.DURATION,
-    "volt_l1": SensorDeviceClass.VOLTAGE,
-    "volt_l2": SensorDeviceClass.VOLTAGE,
-    "volt_l3": SensorDeviceClass.VOLTAGE,
-    "volt_mains": SensorDeviceClass.VOLTAGE,
-    "volt_mains_l1": SensorDeviceClass.VOLTAGE,
-    "volt_mains_l2": SensorDeviceClass.VOLTAGE,
-    "volt_mains_l3": SensorDeviceClass.VOLTAGE,
-    "wifi_signal": SensorDeviceClass.SIGNAL_STRENGTH,
-    "wifi_signal_strength": SensorDeviceClass.SIGNAL_STRENGTH,
-}
-
-ENTITY_CATEGORIES: Final = {
-    "cur_eth_mode": EntityCategory.DIAGNOSTIC,
-    "freq": EntityCategory.DIAGNOSTIC,
-    "uptime": EntityCategory.DIAGNOSTIC,
-    "volt_l1": EntityCategory.DIAGNOSTIC,
-    "volt_l2": EntityCategory.DIAGNOSTIC,
-    "volt_l3": EntityCategory.DIAGNOSTIC,
-    "volt_mains": EntityCategory.DIAGNOSTIC,
-    "volt_mains_l1": EntityCategory.DIAGNOSTIC,
-    "volt_mains_l2": EntityCategory.DIAGNOSTIC,
-    "volt_mains_l3": EntityCategory.DIAGNOSTIC,
-    "wifi_signal": EntityCategory.DIAGNOSTIC,
-    "wifi_signal_strength": EntityCategory.DIAGNOSTIC,
-}
-
-STATE_CLASSES: Final = {
-    "uptime": SensorStateClass.TOTAL_INCREASING,
+SENSOR_DESCRIPTIONS: Final[dict[str, dict[str, Any]]] = {
+    "cur_eth_mode": {
+        "enabled": False,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "cur_eth_mode",
+    },
+    "curr_l1": {
+        "device_class": SensorDeviceClass.CURRENT,
+        "translation_key": "curr_l1",
+    },
+    "curr_l2": {
+        "device_class": SensorDeviceClass.CURRENT,
+        "translation_key": "curr_l2",
+    },
+    "curr_l3": {
+        "device_class": SensorDeviceClass.CURRENT,
+        "translation_key": "curr_l3",
+    },
+    "curr_mains": {
+        "device_class": SensorDeviceClass.CURRENT,
+        "translation_key": "curr_l1",
+    },
+    "freq": {
+        "device_class": SensorDeviceClass.FREQUENCY,
+        "enabled": False,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "freq",
+    },
+    "power": {"device_class": SensorDeviceClass.POWER},
+    "power_ac9": {"device_class": SensorDeviceClass.POWER},
+    "power_act": {"device_class": SensorDeviceClass.POWER},
+    "power_elwa2": {"device_class": SensorDeviceClass.POWER},
+    "power_grid": {"device_class": SensorDeviceClass.POWER},
+    "power_solar": {
+        "device_class": SensorDeviceClass.POWER,
+        "translation_key": "power_solar",
+    },
+    "screen_mode_flag": {"translation_key": "screen_mode_flag"},
+    "temp_ps": {
+        "device_class": SensorDeviceClass.TEMPERATURE,
+        "enabled": False,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "temp_ps",
+    },
+    "temp1": {
+        "device_class": SensorDeviceClass.TEMPERATURE,
+        "translation_key": "temp1",
+    },
+    "temp2": {
+        "device_class": SensorDeviceClass.TEMPERATURE,
+        "translation_key": "temp2",
+    },
+    "temp3": {
+        "device_class": SensorDeviceClass.TEMPERATURE,
+        "translation_key": "temp3",
+    },
+    "temp4": {
+        "device_class": SensorDeviceClass.TEMPERATURE,
+        "translation_key": "temp4",
+    },
+    "uptime": {
+        "device_class": SensorDeviceClass.DURATION,
+        "enabled": False,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "state_class": SensorStateClass.TOTAL_INCREASING,
+        "translation_key": "uptime",
+    },
+    "volt_l1": {
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "volt_l1",
+    },
+    "volt_l2": {
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "volt_l2",
+    },
+    "volt_l3": {
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "volt_l3",
+    },
+    "volt_mains": {
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "volt_l1",
+    },
+    "volt_mains_l1": {
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "volt_l1",
+    },
+    "volt_mains_l2": {
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "volt_l2",
+    },
+    "volt_mains_l3": {
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "volt_l3",
+    },
+    "volt_solar": {
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "translation_key": "volt_solar",
+    },
+    "wifi_signal": {
+        "device_class": SensorDeviceClass.SIGNAL_STRENGTH,
+        "enabled": False,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "wifi_signal",
+    },
+    "wifi_signal_strength": {
+        "device_class": SensorDeviceClass.SIGNAL_STRENGTH,
+        "enabled": False,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "translation_key": "wifi_signal_strength",
+    },
 }
 
 
@@ -74,41 +146,35 @@ async def async_setup_entry(
     entities = []
 
     for key, config in coordinator.data_configurations:
-        if config.get("type") != "boolean" and key not in RESERVED_KEYS:
-            options = None
+        if config.get("type") != "boolean" and key in SENSOR_DESCRIPTIONS:
+            sensor_description: dict = SENSOR_DESCRIPTIONS[key]
+
             device_class = None
+            options = None
             state_class = None
             if config.get("type") == "enumeration":
                 device_class = SensorDeviceClass.ENUM
                 options = list(config.get("options").keys())
             elif config.get("type") == "string":
-                device_class = DEVICE_CLASSES.get(key)
+                device_class = sensor_description.get("device_class")
             else:
-                device_class = DEVICE_CLASSES.get(key)
-                state_class = STATE_CLASSES.get(key, SensorStateClass.MEASUREMENT)
+                device_class = sensor_description.get("device_class")
+                state_class = sensor_description.get(
+                    "state_class", SensorStateClass.MEASUREMENT
+                )
 
-            entity_category = ENTITY_CATEGORIES.get(key)
-
-            translation_key: str | None = key
-            if key == "curr_mains" and coordinator.device.supports_data("curr_l2"):
-                translation_key = "curr_l1"
-            elif key == "curr_l1" and not coordinator.device.supports_data("curr_l2"):
+            translation_key: str | None = sensor_description.get("translation_key")
+            if key in (
+                "curr_mains",
+                "curr_l1",
+            ) and not coordinator.device.supports_data("curr_l2"):
                 translation_key = None
-            elif key == "volt_mains" and coordinator.device.supports_data("volt_l2"):
-                translation_key = "volt_l1"
-            elif key == "volt_l1" and not coordinator.device.supports_data("volt_l2"):
-                translation_key = None
-            elif key == "volt_mains" and coordinator.device.supports_data(
-                "volt_mains_l2"
-            ):
-                translation_key = "volt_mains_l1"
-            elif key == "volt_mains_l1" and not coordinator.device.supports_data(
-                "volt_mains_l2"
+            elif key in ("volt_mains", "volt_l1") and not (
+                coordinator.device.supports_data("volt_l2"),
+                coordinator.device.supports_data("volt_mains_l2"),
             ):
                 translation_key = None
             elif key == "temp1" and not coordinator.device.supports_data("temp2"):
-                translation_key = None
-            elif key in ("curr_mains", "power_grid", "volt_mains"):
                 translation_key = None
 
             suggested_display_precision = None
@@ -121,12 +187,13 @@ async def async_setup_entry(
             entity_description = SensorEntityDescription(
                 key=key,
                 device_class=device_class,
-                entity_category=entity_category,
+                entity_category=sensor_description.get("entity_category"),
                 translation_key=translation_key,
                 native_unit_of_measurement=config.get("unit"),
                 options=options,
                 state_class=state_class,
                 suggested_display_precision=suggested_display_precision,
+                entity_registry_enabled_default=sensor_description.get("enabled", True),
             )
             entities.append(
                 MyPVSensor(
