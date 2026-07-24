@@ -188,6 +188,9 @@
             },
             "wifi_signal_strength": {
                 "name": "Wi-Fi Signal Strength"
+            },
+            "energy": {
+                "name": "Energy"
             }
         },
         "switch": {
