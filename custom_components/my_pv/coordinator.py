@@ -23,6 +23,8 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
+UPDATE_INTERVAL = timedelta(seconds=5)
+
 
 def _my_pv_connection[T](
     func: Callable[..., Coroutine[Any, Any, T]],
@@ -77,15 +79,12 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
             _LOGGER,
             name=DOMAIN,
             config_entry=config_entry,
-            update_interval=timedelta(seconds=5),
+            update_interval=UPDATE_INTERVAL,
             always_update=True,
         )
 
         self.device: Final[MyPVDevice] = device
 
-        identifiers = {
-            (DOMAIN, device.serial_number),
-        }
         connections = set()
 
         if device.mac_address:
@@ -96,7 +95,7 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
         self.device_info: Final[DeviceInfo] = DeviceInfo(
             configuration_url=device.setup_uri,
             connections=connections,
-            identifiers=identifiers,
+            identifiers={(DOMAIN, device.serial_number)},
             manufacturer="my-PV",
             model=device.model,
             name=name,
@@ -129,10 +128,7 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
         return self._command_configurations
 
     async def async_disconnect(self) -> bool:
-        """Disconnect from my-PV.
-
-        To be called when coordinator is unloaded, e.g. when device is removed or HA is shut down.
-        """
+        """Disconnect from my-PV."""
         return await self.device.disconnect()
 
     @override

@@ -58,14 +58,20 @@
     }
   },
   "exceptions": {
+    "auth_error": {
+      "message": "Authentication failed, please reauthenticate."
+    },
     "cannot_connect": {
       "message": "[%key:common::config_flow::error::cannot_connect%]"
     },
     "device_unavailable": {
       "message": "Device on {uri} is unavailable"
     },
+    "fetch_failed": {
+      "message": "Failed to fetch data."
+    },
     "unknown_error": {
-      "message": "Unknown error."
+      "message": "The device could not complete the requested action."
     }
   }
 }
