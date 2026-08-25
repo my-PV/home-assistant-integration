@@ -57,6 +57,13 @@
       }
     }
   },
+  "entity": {
+    "sensor": {
+      "energy": {
+        "name": "Energy"
+      }
+    }
+  },
   "exceptions": {
     "cannot_connect": {
       "message": "[%key:common::config_flow::error::cannot_connect%]"

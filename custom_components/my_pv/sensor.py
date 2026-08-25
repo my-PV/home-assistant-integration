@@ -1,6 +1,9 @@
 """Creates Sensor entities for the my-PV Home Assistant integration."""
 
+from datetime import UTC, datetime
 from typing import Any, Final, override
+
+from my_pv.exceptions import MyPVNotSupportedError
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -8,12 +11,14 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, UnitOfEnergy
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.restore_state import RestoreEntity
 
 from . import MyPVConfigEntry
-from .entity import MyPVDataEntity
+from .coordinator import MyPVCoordinator
+from .entity import MyPVBaseEntity, MyPVDataEntity
 
 SENSOR_DESCRIPTIONS: Final[dict[str, dict[str, Any]]] = {
     "cur_eth_mode": {
@@ -135,6 +140,14 @@ SENSOR_DESCRIPTIONS: Final[dict[str, dict[str, Any]]] = {
     },
 }
 
+POWER_KEYS: Final = [
+    "power",
+    "power_ac9",
+    "power_act",
+    "power_elwa2",
+    "power_grid",
+]
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -204,7 +217,97 @@ async def async_setup_entry(
                 )
             )
 
+    power_key = next(
+        (key for key in POWER_KEYS if coordinator.device.supports_data(key)), None
+    )
+    if power_key is not None:
+        entities.append(
+            MyPVEnergySensor(
+                coordinator,
+                SensorEntityDescription(
+                    key="energy",
+                    device_class=SensorDeviceClass.ENERGY,
+                    state_class=SensorStateClass.TOTAL_INCREASING,
+                    native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+                    translation_key="energy",
+                    suggested_display_precision=3,
+                ),
+                coordinator.device.serial_number,
+                power_key,
+            )
+        )
+
     async_add_entities(entities)
+
+
+class MyPVEnergySensor(MyPVBaseEntity, SensorEntity, RestoreEntity):
+    """Energy sensor calculated from power readings."""
+
+    _last_update: datetime | None = None
+    _accumulated_energy: float = 0.0
+    _power_key: str
+
+    def __init__(
+        self,
+        coordinator: MyPVCoordinator,
+        entity_description: SensorEntityDescription,
+        serial_number: str,
+        power_key: str,
+    ) -> None:
+        """Initialize the energy sensor."""
+        super().__init__(coordinator, entity_description, serial_number)
+        self._power_key = power_key
+
+    @property
+    @override
+    def available(self) -> bool:
+        """Return if entity is available."""
+        if (
+            not self.coordinator.device.connected
+            or self.coordinator.device.is_on is None
+        ):
+            return False
+        if not self.coordinator.device.supports_data(self._power_key):
+            return False
+        try:
+            if self.coordinator.device.get_data_value(self._power_key) is None:
+                return False
+        except MyPVNotSupportedError:
+            return False
+        return super().available
+
+    @override
+    async def async_added_to_hass(self) -> None:
+        """Restore previous accumulated energy."""
+        await super().async_added_to_hass()
+        last_state = await self.async_get_last_state()
+        if last_state and last_state.state not in ("unknown", "unavailable"):
+            try:
+                self._accumulated_energy = float(last_state.state)
+            except (ValueError, TypeError):
+                pass
+
+    @property
+    @override
+    def native_value(self) -> float:
+        """Return accumulated energy in kWh."""
+        return self._accumulated_energy
+
+    @override
+    def _handle_coordinator_update(self) -> None:
+        """Accumulate energy from power readings on each update."""
+        now = datetime.now(UTC)
+        if self._last_update is not None:
+            time_delta_hours = (now - self._last_update).total_seconds() / 3600
+            if time_delta_hours <= 1:
+                try:
+                    power = self.coordinator.device.get_data_value(self._power_key)
+                except MyPVNotSupportedError:
+                    power = None
+                if power is not None:
+                    self._accumulated_energy += power * time_delta_hours / 1000
+        self._last_update = now
+        super()._handle_coordinator_update()
 
 
 class MyPVSensor(MyPVDataEntity, SensorEntity):
