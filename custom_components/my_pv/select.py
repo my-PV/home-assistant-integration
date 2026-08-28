@@ -3,6 +3,7 @@
 from typing import override
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
@@ -25,8 +26,9 @@ async def async_setup_entry(
     if config and config.get("type") == "enumeration":
         entity_description = SelectEntityDescription(
             key="bstmode",
+            entity_category=EntityCategory.CONFIG,
             translation_key="bstmode",
-            options=list(config["options"].keys()),
+            entity_registry_enabled_default=False,
         )
         entities.append(
             MyPVSelect(
@@ -41,6 +43,16 @@ async def async_setup_entry(
 
 class MyPVSelect(MyPVSetupEntity, SelectEntity):
     """my-PV select."""
+
+    @property
+    @override
+    def options(self) -> list[str]:
+        """Return a set of selectable options."""
+        return list(
+            self.coordinator.device.get_setup_configuration(
+                self.entity_description.key
+            )["options"].keys()
+        )
 
     @property
     @override

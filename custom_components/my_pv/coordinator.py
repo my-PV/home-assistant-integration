@@ -154,7 +154,6 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
                 "Device is rate limiting, reducing update interval to 10 seconds"
             )
             self.update_interval = timedelta(seconds=10)
-            pass
         except MyPVAuthenticationError as exc:
             raise ConfigEntryAuthFailed(
                 translation_domain=DOMAIN,

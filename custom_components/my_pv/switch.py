@@ -1,6 +1,6 @@
 """Creates Switch entities for the my-PV Home Assistant integration."""
 
-from typing import Any, override
+from typing import Any, Final, override
 
 from homeassistant.components.switch import (
     SwitchDeviceClass,
@@ -12,8 +12,23 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import MyPVConfigEntry
-from .const import DOMAIN, RESERVED_KEYS
+from .const import DOMAIN
 from .entity import MyPVSetupEntity
+
+SWITCH_DESCRIPTIONS: Final[dict[str, dict[str, Any]]] = {
+    "boostactive": {
+        "translation_key": "boostactive",
+        "device_class": SwitchDeviceClass.SWITCH,
+    },
+    "bstmode": {
+        "translation_key": "bstmode",
+        "device_class": SwitchDeviceClass.SWITCH,
+    },
+    "bststrt": {
+        "translation_key": "bststrt",
+        "device_class": SwitchDeviceClass.SWITCH,
+    },
+}
 
 
 async def async_setup_entry(
@@ -26,11 +41,15 @@ async def async_setup_entry(
     entities = []
 
     for key, config in coordinator.setup_configurations:
-        if config.get("type") == "boolean" and key not in RESERVED_KEYS:
+        if config.get("type") == "boolean" and key in SWITCH_DESCRIPTIONS:
+            switch_description: dict = SWITCH_DESCRIPTIONS[key]
+
             entity_description = SwitchEntityDescription(
                 key=key,
-                translation_key=key,
-                device_class=SwitchDeviceClass.SWITCH,
+                device_class=switch_description.get("device_class"),
+                entity_category=switch_description.get("entity_category"),
+                translation_key=switch_description.get("translation_key"),
+                entity_registry_enabled_default=switch_description.get("enabled", True),
             )
             entities.append(
                 MyPVSwitch(

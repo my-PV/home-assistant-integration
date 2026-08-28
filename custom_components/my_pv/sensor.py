@@ -164,18 +164,20 @@ async def async_setup_entry(
                 )
 
             translation_key: str | None = sensor_description.get("translation_key")
-            if key in (
-                "curr_mains",
-                "curr_l1",
-            ) and not coordinator.device.supports_data("curr_l2"):
-                translation_key = None
-            elif (
-                key in ("volt_mains", "volt_l1")
-                and not coordinator.device.supports_data("volt_l2")
-                and not coordinator.device.supports_data("volt_mains_l2")
+            if (
+                key
+                in (
+                    "curr_mains",
+                    "curr_l1",
+                )
+                and not coordinator.device.supports_data("curr_l2")
+                or (
+                    key in ("volt_mains", "volt_l1")
+                    and not coordinator.device.supports_data("volt_l2")
+                    and not coordinator.device.supports_data("volt_mains_l2")
+                )
+                or (key == "temp1" and not coordinator.device.supports_data("temp2"))
             ):
-                translation_key = None
-            elif key == "temp1" and not coordinator.device.supports_data("temp2"):
                 translation_key = None
 
             suggested_display_precision = None

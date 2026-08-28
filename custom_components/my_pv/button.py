@@ -2,7 +2,7 @@
 """Creates Button entities for the my-PV Home Assistant integration."""
 
 import logging
-from typing import Any, Final, override
+from typing import Any, override
 
 from homeassistant.components.button import (
     ButtonDeviceClass,
@@ -15,16 +15,10 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import MyPVConfigEntry
-from .const import DOMAIN, RESERVED_KEYS
+from .const import DOMAIN
 from .entity import MyPVCommandEntity
 
 _LOGGER = logging.getLogger(__name__)
-
-BUTTON_DEVICE_CLASSES: Final = {"reboot_device": ButtonDeviceClass.RESTART}
-
-ENTITY_CATEGORIES: Final = {
-    "reboot_device": EntityCategory.DIAGNOSTIC,
-}
 
 
 async def async_setup_entry(
@@ -36,31 +30,20 @@ async def async_setup_entry(
     coordinator = config_entry.runtime_data
     entities = []
 
-    for command, configuration in coordinator.command_configurations:
-        if (
-            configuration.get("type")
-            in [
-                "any",
-                "fixed",
-            ]
-            and command not in RESERVED_KEYS
-        ):
-            device_class = BUTTON_DEVICE_CLASSES.get(command)
-            entity_category = ENTITY_CATEGORIES.get(command)
-
-            entity_description = ButtonEntityDescription(
-                key=command,
-                device_class=device_class,
-                translation_key=command,
-                entity_category=entity_category,
+    config = coordinator.device.get_command_configuration("reboot_device")
+    if config and config.get("type") in ["any", "fixed"]:
+        entity_description = ButtonEntityDescription(
+            key="reboot_device",
+            device_class=ButtonDeviceClass.RESTART,
+            entity_category=EntityCategory.DIAGNOSTIC,
+        )
+        entities.append(
+            MyPVCommandButton(
+                coordinator,
+                entity_description,
+                coordinator.device.serial_number,
             )
-            entities.append(
-                MyPVCommandButton(
-                    coordinator,
-                    entity_description,
-                    coordinator.device.serial_number,
-                )
-            )
+        )
 
     async_add_entities(entities)
 

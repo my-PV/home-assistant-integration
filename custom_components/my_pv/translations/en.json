@@ -64,23 +64,6 @@
                 "name": "Block Status"
             }
         },
-        "button": {
-            "check_fwupd": {
-                "name": "Check Firmware Update"
-            },
-            "firmware_download": {
-                "name": "Download Firmware"
-            },
-            "p9s_fw": {
-                "name": "Firmware Update"
-            },
-            "ps_fw": {
-                "name": "Power Section Firmware Update"
-            },
-            "reboot_device": {
-                "name": "Reboot"
-            }
-        },
         "number": {
             "bsttemp": {
                 "name": "Boost Target Temperature"
