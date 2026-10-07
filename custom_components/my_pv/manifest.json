@@ -18,6 +18,6 @@
   "loggers": ["my_pv"],
   "quality_scale": "bronze",
   "requirements": ["my-pv>=0.0.12"],
-  "version": "0.0.1rc6",
+  "version": "0.0.1rc8",
   "zeroconf": ["_mypv._tcp.local."]
 }
