@@ -19,4 +19,4 @@ uv pip install \
   --upgrade \
   --config-settings editable_mode=compat
 
-#pre-commit install
+pre-commit install
