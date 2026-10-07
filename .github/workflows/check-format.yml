@@ -1,5 +1,6 @@
 name: Check Python code format
 
+# yamllint disable-line rule:truthy
 on: [push]
 
 jobs:

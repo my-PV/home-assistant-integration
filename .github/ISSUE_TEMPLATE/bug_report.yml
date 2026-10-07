@@ -113,7 +113,7 @@ body:
     attributes:
       label: Device data.jsn
       description: >
-        For better understanding of your problem the raw `data.jsn` file can be usefull. 
+        For better understanding of your problem the raw `data.jsn` file can be usefull.
 
         Go to your device and add `/data.jsn` to to the url.
 
