@@ -20,11 +20,11 @@ module.exports = {
         }),
       },
     },
-	{
-	  files: ["custom_components/*/translations/*.json"],
-	  options: {
-	    tabWidth: 4,
-	  },
-	},
+    {
+      files: ["custom_components/*/translations/*.json"],
+      options: {
+        tabWidth: 4,
+      },
+    },
   ],
 };
