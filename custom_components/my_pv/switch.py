@@ -44,22 +44,18 @@ async def async_setup_entry(
 ) -> None:
     """Set up the my-PV switch."""
     coordinator = config_entry.runtime_data
-    entities: list[SwitchEntity] = []
 
-    for key, config in (
-        (key, config)
+    entities: list[SwitchEntity] = [
+        MyPVSwitch(
+            coordinator,
+            ENTITY_DESCRIPTIONS[key],
+            coordinator.device.serial_number,
+        )
         for key, config in coordinator.device.get_setup_configurations().items()
         if config.get("type") == "boolean"
         and key in ENTITY_DESCRIPTIONS
         and key != "devmode"
-    ):
-        entities.append(
-            MyPVSwitch(
-                coordinator,
-                ENTITY_DESCRIPTIONS[key],
-                coordinator.device.serial_number,
-            )
-        )
+    ]
 
     if (
         coordinator.device.supports_main_mode(MyPVDeviceMainMode.HOT_WATER)
