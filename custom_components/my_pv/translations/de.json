@@ -7,12 +7,12 @@
         "abort": {
             "already_configured": "Das Gerät ist bereits eingerichtet",
             "cannot_connect": "Verbindung fehlgeschlagen",
-            "reauth_successful": "Die erneute Authentifizierung war erfolgreich"
+            "unique_id_mismatch": "Die Seriennummer des Geräts stimmt nicht mit der des ursprünglichen Geräts überein.",
+            "unsupported_device": "Dieses my-PV-Gerät wird nicht unterstützt."
         },
         "error": {
             "cannot_connect": "Verbindung fehlgeschlagen",
-            "invalid_password": "Ungültiges Passwort",
-            "unknown_error": "Unerwarteter Fehler"
+            "invalid_password": "Ungültiges Passwort"
         },
         "step": {
             "auth": {
@@ -38,7 +38,7 @@
                 "description": "Möchten Sie {name} einrichten?",
                 "title": "{name}"
             },
-            "reauth": {
+            "reauth_confirm": {
                 "data": {
                     "password": "Passwort"
                 },
@@ -64,32 +64,15 @@
                 "name": "Sperrstatus"
             }
         },
-        "button": {
-            "check_fwupd": {
-                "name": "Nach Firmware-Update suchen"
-            },
-            "firmware_download": {
-                "name": "Firmware herunterladen"
-            },
-            "p9s_fw": {
-                "name": "Firmware-Update"
-            },
-            "ps_fw": {
-                "name": "Firmware-Update des Leistungsteils"
-            },
-            "reboot_device": {
-                "name": "Neustart"
-            }
-        },
         "number": {
             "bsttemp": {
-                "name": "Zieltemperatur der Nachheizung"
+                "name": "Sicherstellungstemperatur"
             },
             "maxpwr": {
                 "name": "Maximale Leistung"
             },
             "ww1boost": {
-                "name": "Zieltemperatur der Nachheizung"
+                "name": "Sicherstellungstemperatur"
             },
             "ww_boost_h": {
                 "name": "Minimale Hysterese"
@@ -100,7 +83,7 @@
         },
         "select": {
             "bstmode": {
-                "name": "Nachheizmodus",
+                "name": "Warmwassersicherstellung",
                 "state": {
                     "0": "Aus",
                     "1": "Ein",
@@ -146,9 +129,6 @@
                     "6": "Sperre aktiv"
                 }
             },
-            "temp_ps": {
-                "name": "Gerätetemperatur"
-            },
             "temp1": {
                 "name": "Temperatur 1"
             },
@@ -160,6 +140,9 @@
             },
             "temp4": {
                 "name": "Temperatur 4"
+            },
+            "temp_ps": {
+                "name": "Gerätetemperatur"
             },
             "uptime": {
                 "name": "Betriebszeit"
@@ -192,13 +175,13 @@
         },
         "switch": {
             "boostactive": {
-                "name": "Nachheizung aktiv"
+                "name": "Warmwassersicherstellung aktiv"
             },
             "bstmode": {
-                "name": "Nachheizmodus"
+                "name": "Warmwassersicherstellung"
             },
             "bststrt": {
-                "name": "Manuelle Nachheizung"
+                "name": "Manuelles Heizen"
             }
         }
     },
@@ -215,8 +198,14 @@
         "fetch_failed": {
             "message": "Daten konnten nicht abgerufen werden."
         },
+        "rate_limiting": {
+            "message": "Zu viele Anfragen."
+        },
         "unknown_error": {
             "message": "Unbekannter Fehler."
+        },
+        "unsupported_device": {
+            "message": "Dieses my-PV-Gerät wird nicht unterstützt."
         }
     }
 }
