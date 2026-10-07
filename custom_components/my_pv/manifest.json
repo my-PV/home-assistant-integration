@@ -17,7 +17,7 @@
   "issue_tracker": "https://github.com/my-PV/home-assistant-integration/issues",
   "loggers": ["my_pv"],
   "quality_scale": "bronze",
-  "requirements": ["my-pv>=0.0.10"],
+  "requirements": ["my-pv>=0.0.12"],
   "version": "0.0.1rc6",
   "zeroconf": ["_mypv._tcp.local."]
 }

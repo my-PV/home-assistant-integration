@@ -34,7 +34,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "my-pv>=0.0.11"
+    "my-pv>=0.0.12"
 ]
 
 [project.urls]
