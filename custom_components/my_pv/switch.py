@@ -46,12 +46,17 @@ async def async_setup_entry(
     coordinator = config_entry.runtime_data
     entities: list[SwitchEntity] = []
 
-    config = coordinator.device.get_setup_configuration("bstmode")
-    if config and config.get("type") == "boolean":
+    for key, config in (
+        (key, config)
+        for key, config in coordinator.device.get_setup_configurations().items()
+        if config.get("type") == "boolean"
+        and key in ENTITY_DESCRIPTIONS
+        and key != "devmode"
+    ):
         entities.append(
             MyPVSwitch(
                 coordinator,
-                ENTITY_DESCRIPTIONS["bstmode"],
+                ENTITY_DESCRIPTIONS[key],
                 coordinator.device.serial_number,
             )
         )
