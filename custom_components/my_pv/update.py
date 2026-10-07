@@ -76,7 +76,7 @@ class MyPVFirmwareUpdate(MyPVBaseEntity, UpdateEntity):
         self._attr_update_percentage = 0
         self.async_write_ha_state()
 
-        if not await self.coordinator.update_firmware():
+        if not await self.coordinator.device.update_firmware():
             raise HomeAssistantError(
                 translation_domain=DOMAIN, translation_key="unknown_error"
             )
