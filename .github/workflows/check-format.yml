@@ -4,9 +4,12 @@ name: Check Python code format
 on: [push]
 
 jobs:
-  linter_name:
+  ruff:
     name: ruff check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/ruff-action@v3
+      - uses: astral-sh/ruff-action@v3
+        with:
+          args: "format --check"
