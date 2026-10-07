@@ -1,0 +1,211 @@
+{
+    "common": {
+        "discovery_description": "Wil je {name} instellen?",
+        "password_description": "Het wachtwoord van je my-PV-apparaat. Als er geen eigen wachtwoord is ingesteld, gebruik je de **devicekey**. Die vind je in het ⓘ-infomenu van je my-PV-apparaat. Bij de HEA•THOR IoT staat de **devicekey** op het typeplaatje van het apparaat."
+    },
+    "config": {
+        "abort": {
+            "already_configured": "Apparaat is al geconfigureerd",
+            "cannot_connect": "Kan geen verbinding maken",
+            "unique_id_mismatch": "Het serienummer van het apparaat komt niet overeen met dat van het oorspronkelijke apparaat.",
+            "unsupported_device": "Dit my-PV-apparaat wordt niet ondersteund."
+        },
+        "error": {
+            "cannot_connect": "Kan geen verbinding maken",
+            "invalid_password": "Ongeldig wachtwoord"
+        },
+        "step": {
+            "auth": {
+                "data": {
+                    "password": "Wachtwoord"
+                },
+                "data_description": {
+                    "password": "Het wachtwoord van je my-PV-apparaat. Als er geen eigen wachtwoord is ingesteld, gebruik je de **devicekey**. Die vind je in het ⓘ-infomenu van je my-PV-apparaat. Bij de HEA•THOR IoT staat de **devicekey** op het typeplaatje van het apparaat."
+                },
+                "title": "Wachtwoord voor {name}"
+            },
+            "discovery_auth": {
+                "data": {
+                    "password": "Wachtwoord"
+                },
+                "data_description": {
+                    "password": "Het wachtwoord van je my-PV-apparaat. Als er geen eigen wachtwoord is ingesteld, gebruik je de **devicekey**. Die vind je in het ⓘ-infomenu van je my-PV-apparaat. Bij de HEA•THOR IoT staat de **devicekey** op het typeplaatje van het apparaat."
+                },
+                "description": "Wil je {name} instellen?",
+                "title": "{name}"
+            },
+            "discovery_confirm": {
+                "description": "Wil je {name} instellen?",
+                "title": "{name}"
+            },
+            "reauth_confirm": {
+                "data": {
+                    "password": "Wachtwoord"
+                },
+                "data_description": {
+                    "password": "Het wachtwoord van je my-PV-apparaat. Als er geen eigen wachtwoord is ingesteld, gebruik je de **devicekey**. Die vind je in het ⓘ-infomenu van je my-PV-apparaat. Bij de HEA•THOR IoT staat de **devicekey** op het typeplaatje van het apparaat."
+                },
+                "title": "Wachtwoord voor {name}"
+            },
+            "user": {
+                "data": {
+                    "host": "Host"
+                },
+                "data_description": {
+                    "host": "Het IP-adres of de hostnaam van je my-PV-apparaat."
+                },
+                "title": "my-PV-apparaat"
+            }
+        }
+    },
+    "entity": {
+        "binary_sensor": {
+            "blockactive": {
+                "name": "Blokkeerstatus"
+            }
+        },
+        "number": {
+            "bsttemp": {
+                "name": "Boost-doeltemperatuur"
+            },
+            "maxpwr": {
+                "name": "Maximaal vermogen"
+            },
+            "ww1boost": {
+                "name": "Boost-doeltemperatuur"
+            },
+            "ww_boost_h": {
+                "name": "Minimale hysterese"
+            },
+            "ww_targ_h": {
+                "name": "Maximale hysterese"
+            }
+        },
+        "select": {
+            "bstmode": {
+                "name": "Boostmodus",
+                "state": {
+                    "0": "Uit",
+                    "1": "Aan",
+                    "3": "Relais",
+                    "4": "SELV-relais",
+                    "5": "AUX-relais"
+                }
+            }
+        },
+        "sensor": {
+            "cur_eth_mode": {
+                "name": "Netwerkmodus",
+                "state": {
+                    "0": "LAN",
+                    "1": "WLAN",
+                    "2": "Accesspoint"
+                }
+            },
+            "curr_l1": {
+                "name": "Stroom fase L1"
+            },
+            "curr_l2": {
+                "name": "Stroom fase L2"
+            },
+            "curr_l3": {
+                "name": "Stroom fase L3"
+            },
+            "freq": {
+                "name": "Netfrequentie"
+            },
+            "power_solar": {
+                "name": "PV-vermogen"
+            },
+            "screen_mode_flag": {
+                "name": "Apparaatstatus",
+                "state": {
+                    "0": "Stand-by",
+                    "1": "Verwarmen",
+                    "2": "Boost",
+                    "3": "Opwarmen voltooid",
+                    "4": "Geen verbinding / Uitgeschakeld",
+                    "5": "Storing",
+                    "6": "Blokkering actief"
+                }
+            },
+            "temp1": {
+                "name": "Temperatuur 1"
+            },
+            "temp2": {
+                "name": "Temperatuur 2"
+            },
+            "temp3": {
+                "name": "Temperatuur 3"
+            },
+            "temp4": {
+                "name": "Temperatuur 4"
+            },
+            "temp_ps": {
+                "name": "Apparaattemperatuur"
+            },
+            "uptime": {
+                "name": "Bedrijfstijd"
+            },
+            "volt_l1": {
+                "name": "Spanning fase L1"
+            },
+            "volt_l2": {
+                "name": "Spanning fase L2"
+            },
+            "volt_l3": {
+                "name": "Spanning fase L3"
+            },
+            "volt_solar": {
+                "name": "PV-spanning"
+            },
+            "wifi_signal": {
+                "name": "Wifi-signaalsterkte",
+                "state": {
+                    "0": "Slecht",
+                    "1": "Zwak",
+                    "2": "Gemiddeld",
+                    "3": "Goed",
+                    "4": "Sterk"
+                }
+            },
+            "wifi_signal_strength": {
+                "name": "Wifi-signaalsterkte"
+            }
+        },
+        "switch": {
+            "boostactive": {
+                "name": "Boost actief"
+            },
+            "bstmode": {
+                "name": "Boostmodus"
+            },
+            "bststrt": {
+                "name": "Handmatige boost"
+            }
+        }
+    },
+    "exceptions": {
+        "auth_error": {
+            "message": "Authenticatie mislukt, authenticeer opnieuw."
+        },
+        "cannot_connect": {
+            "message": "Kan geen verbinding maken"
+        },
+        "device_unavailable": {
+            "message": "Apparaat op {uri} is niet beschikbaar"
+        },
+        "fetch_failed": {
+            "message": "Ophalen van gegevens mislukt."
+        },
+        "rate_limiting": {
+            "message": "Te veel verzoeken."
+        },
+        "unknown_error": {
+            "message": "Het apparaat kon de gevraagde actie niet uitvoeren."
+        },
+        "unsupported_device": {
+            "message": "Dit my-PV-apparaat wordt niet ondersteund."
+        }
+    }
+}
