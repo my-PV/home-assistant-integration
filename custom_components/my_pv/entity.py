@@ -2,8 +2,6 @@
 
 from typing import override
 
-from my_pv.exceptions import MyPVNotSupportedError
-
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -22,35 +20,22 @@ class MyPVBaseEntity(CoordinatorEntity[MyPVCoordinator]):
         serial_number: str,
     ) -> None:
         """Initialize the entity."""
-        super().__init__(coordinator, entity_description.key)
+        super().__init__(coordinator)
 
         self._attr_device_info = coordinator.device_info
         self._attr_unique_id = f"{serial_number}-{entity_description.key}"
 
         self.entity_description = entity_description
 
-    @override
-    async def async_added_to_hass(self) -> None:
-        """Call when entity is added to Home Assistant."""
-        await super().async_added_to_hass()
-
-        self._handle_coordinator_update()
-
-
-class MyPVCommandEntity(MyPVBaseEntity):
-    """The my-PV command entity."""
-
     @property
     @override
     def available(self) -> bool:
         """Return if entity is available."""
-        if (
-            not self.coordinator.device.connected
-            or self.coordinator.device.is_on is None
-        ):
-            return False
-
-        return super().available
+        return (
+            super().available
+            and self.coordinator.device.connected
+            and self.coordinator.device.is_on is not None
+        )
 
 
 class MyPVDataEntity(MyPVBaseEntity):
@@ -60,42 +45,22 @@ class MyPVDataEntity(MyPVBaseEntity):
     @override
     def available(self) -> bool:
         """Return if entity is available."""
-        if (
-            not self.coordinator.device.connected
-            or self.coordinator.device.is_on is None
-        ):
-            return False
-        try:
-            if (
-                self.coordinator.device.get_data_value(self.entity_description.key)
-                is None
-            ):
-                return False
-        except MyPVNotSupportedError:
-            return False
-
-        return super().available
+        return (
+            super().available
+            and self.coordinator.device.get_data_value(self.entity_description.key)
+            is not None
+        )
 
 
 class MyPVSetupEntity(MyPVBaseEntity):
-    """The my-PV setup entity."""
+    """The my-PV data entity."""
 
     @property
     @override
     def available(self) -> bool:
         """Return if entity is available."""
-        if (
-            not self.coordinator.device.connected
-            or self.coordinator.device.is_on is None
-        ):
-            return False
-        try:
-            if (
-                self.coordinator.device.get_setup_value(self.entity_description.key)
-                is None
-            ):
-                return False
-        except MyPVNotSupportedError:
-            return False
-
-        return super().available
+        return (
+            super().available
+            and self.coordinator.device.get_setup_value(self.entity_description.key)
+            is not None
+        )

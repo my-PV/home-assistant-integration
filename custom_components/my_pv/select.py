@@ -3,6 +3,7 @@
 from typing import override
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
@@ -25,8 +26,9 @@ async def async_setup_entry(
     if config and config.get("type") == "enumeration":
         entity_description = SelectEntityDescription(
             key="bstmode",
+            entity_category=EntityCategory.CONFIG,
             translation_key="bstmode",
-            options=list(config["options"].keys()),
+            options=list(config.get("options", {}).keys()),
         )
         entities.append(
             MyPVSelect(

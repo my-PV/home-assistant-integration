@@ -1,27 +1,49 @@
 # pylint: disable=duplicate-code
 """Creates Number entities for the my-PV Home Assistant integration."""
 
-from typing import Final, override
+from typing import Any, Final, override
 
 from homeassistant.components.number import (
     NumberDeviceClass,
     NumberEntity,
     NumberEntityDescription,
 )
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import MyPVConfigEntry
-from .const import DOMAIN, RESERVED_KEYS
+from .const import DOMAIN
 from .entity import MyPVSetupEntity
 
-
-DEVICE_CLASSES: Final = {
-    "ww_boost_h": NumberDeviceClass.TEMPERATURE,
-    "ww_targ_h": NumberDeviceClass.TEMPERATURE,
-    "ww1boost": NumberDeviceClass.TEMPERATURE,
-    "ww1target": NumberDeviceClass.TEMPERATURE,
+NUMBER_DESCRIPTIONS: Final[dict[str, dict[str, Any]]] = {
+    "bsttemp": {
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "entity_category": EntityCategory.CONFIG,
+        "translation_key": "ww1boost",
+    },
+    "maxpwr": {
+        "device_class": NumberDeviceClass.POWER,
+        "translation_key": "maxpwr",
+    },
+    "ww1boost": {
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "entity_category": EntityCategory.CONFIG,
+        "translation_key": "ww1boost",
+    },
+    "ww_boost_h": {
+        "device_class": NumberDeviceClass.TEMPERATURE_DELTA,
+        "entity_category": EntityCategory.CONFIG,
+        "enabled": False,
+        "translation_key": "ww_boost_h",
+    },
+    "ww_targ_h": {
+        "device_class": NumberDeviceClass.TEMPERATURE_DELTA,
+        "entity_category": EntityCategory.CONFIG,
+        "enabled": False,
+        "translation_key": "ww_targ_h",
+    },
 }
 
 
@@ -34,17 +56,19 @@ async def async_setup_entry(
     coordinator = config_entry.runtime_data
     entities = []
 
-    for key, config in coordinator.setup_configurations:
-        if config.get("type") == "number" and key not in RESERVED_KEYS:
-            device_class = DEVICE_CLASSES.get(key)
+    for key, config in coordinator.device.get_setup_configurations().items():
+        if config.get("type") == "number" and key in NUMBER_DESCRIPTIONS:
+            number_description: dict = NUMBER_DESCRIPTIONS[key]
             entity_description = NumberEntityDescription(
                 key=key,
-                translation_key=key,
-                device_class=device_class,
+                device_class=number_description.get("device_class"),
+                entity_category=number_description.get("entity_category"),
+                translation_key=number_description.get("translation_key"),
                 native_unit_of_measurement=config.get("unit"),
                 native_min_value=config.get("min", 0),
                 native_max_value=config.get("max"),
                 native_step=config.get("step"),
+                entity_registry_enabled_default=number_description.get("enabled", True),
             )
             entities.append(
                 MyPVNumber(

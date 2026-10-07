@@ -11,7 +11,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import MyPVConfigEntry
-from .const import RESERVED_KEYS
 from .entity import MyPVDataEntity
 
 
@@ -24,19 +23,19 @@ async def async_setup_entry(
     coordinator = config_entry.runtime_data
     entities = []
 
-    for key, config in coordinator.data_configurations:
-        if config.get("type") == "boolean" and key not in RESERVED_KEYS:
-            entity_description = BinarySensorEntityDescription(
-                key=key,
-                translation_key=key,
+    config = coordinator.device.get_data_configuration("blockactive")
+    if config and config.get("type") == "boolean":
+        entity_description = BinarySensorEntityDescription(
+            key="blockactive",
+            translation_key="blockactive",
+        )
+        entities.append(
+            MyPVBinarySensor(
+                coordinator,
+                entity_description,
+                coordinator.device.serial_number,
             )
-            entities.append(
-                MyPVBinarySensor(
-                    coordinator,
-                    entity_description,
-                    coordinator.device.serial_number,
-                )
-            )
+        )
 
     async_add_entities(entities)
 
