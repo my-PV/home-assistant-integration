@@ -1,5 +1,7 @@
 """Creates Sensor entities for the my-PV Home Assistant integration."""
 
+from datetime import date, datetime
+from decimal import Decimal
 from typing import Any, Final, override
 
 from homeassistant.components.sensor import (
@@ -11,6 +13,7 @@ from homeassistant.components.sensor import (
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.typing import StateType
 
 from . import MyPVConfigEntry
 from .entity import MyPVDataEntity
@@ -35,12 +38,14 @@ SENSOR_DESCRIPTIONS: Final[dict[str, dict[str, Any]]] = {
     },
     "curr_mains": {
         "device_class": SensorDeviceClass.CURRENT,
+        "suggested_display_precision": 1,
         "translation_key": "curr_l1",
     },
     "freq": {
         "device_class": SensorDeviceClass.FREQUENCY,
         "enabled": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
+        "suggested_display_precision": 2,
         "translation_key": "freq",
     },
     "power": {"device_class": SensorDeviceClass.POWER},
@@ -53,27 +58,32 @@ SENSOR_DESCRIPTIONS: Final[dict[str, dict[str, Any]]] = {
         "translation_key": "power_solar",
     },
     "screen_mode_flag": {"translation_key": "screen_mode_flag"},
-    "temp_ps": {
-        "device_class": SensorDeviceClass.TEMPERATURE,
-        "enabled": False,
-        "entity_category": EntityCategory.DIAGNOSTIC,
-        "translation_key": "temp_ps",
-    },
     "temp1": {
         "device_class": SensorDeviceClass.TEMPERATURE,
+        "suggested_display_precision": 1,
         "translation_key": "temp1",
     },
     "temp2": {
         "device_class": SensorDeviceClass.TEMPERATURE,
+        "suggested_display_precision": 1,
         "translation_key": "temp2",
     },
     "temp3": {
         "device_class": SensorDeviceClass.TEMPERATURE,
+        "suggested_display_precision": 1,
         "translation_key": "temp3",
     },
     "temp4": {
         "device_class": SensorDeviceClass.TEMPERATURE,
+        "suggested_display_precision": 1,
         "translation_key": "temp4",
+    },
+    "temp_ps": {
+        "device_class": SensorDeviceClass.TEMPERATURE,
+        "enabled": False,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+        "suggested_display_precision": 1,
+        "translation_key": "temp_ps",
     },
     "uptime": {
         "device_class": SensorDeviceClass.DURATION,
@@ -105,16 +115,19 @@ SENSOR_DESCRIPTIONS: Final[dict[str, dict[str, Any]]] = {
     "volt_mains_l1": {
         "device_class": SensorDeviceClass.VOLTAGE,
         "entity_category": EntityCategory.DIAGNOSTIC,
+        "suggested_display_precision": 1,
         "translation_key": "volt_l1",
     },
     "volt_mains_l2": {
         "device_class": SensorDeviceClass.VOLTAGE,
         "entity_category": EntityCategory.DIAGNOSTIC,
+        "suggested_display_precision": 1,
         "translation_key": "volt_l2",
     },
     "volt_mains_l3": {
         "device_class": SensorDeviceClass.VOLTAGE,
         "entity_category": EntityCategory.DIAGNOSTIC,
+        "suggested_display_precision": 1,
         "translation_key": "volt_l3",
     },
     "volt_solar": {
@@ -145,7 +158,7 @@ async def async_setup_entry(
     coordinator = config_entry.runtime_data
     entities = []
 
-    for key, config in coordinator.data_configurations:
+    for key, config in coordinator.device.get_data_configurations().items():
         if config.get("type") != "boolean" and key in SENSOR_DESCRIPTIONS:
             sensor_description: dict = SENSOR_DESCRIPTIONS[key]
 
@@ -154,7 +167,7 @@ async def async_setup_entry(
             state_class = None
             if config.get("type") == "enumeration":
                 device_class = SensorDeviceClass.ENUM
-                options = list(config.get("options").keys())
+                options = list(config["options"].keys())
             elif config.get("type") == "string":
                 device_class = sensor_description.get("device_class")
             else:
@@ -165,27 +178,22 @@ async def async_setup_entry(
 
             translation_key: str | None = sensor_description.get("translation_key")
             if (
-                key
-                in (
-                    "curr_mains",
-                    "curr_l1",
+                (
+                    key
+                    in (
+                        "curr_mains",
+                        "curr_l1",
+                    )
+                    and not coordinator.device.supports_data("curr_l2")
                 )
-                and not coordinator.device.supports_data("curr_l2")
                 or (
-                    key in ("volt_mains", "volt_l1")
+                    key in ("volt_mains", "volt_mains_l1", "volt_l1")
                     and not coordinator.device.supports_data("volt_l2")
                     and not coordinator.device.supports_data("volt_mains_l2")
                 )
                 or (key == "temp1" and not coordinator.device.supports_data("temp2"))
             ):
                 translation_key = None
-
-            suggested_display_precision = None
-            divider = config.get("divider")
-            if divider == 10:
-                suggested_display_precision = 1
-            elif divider:
-                suggested_display_precision = 2
 
             entity_description = SensorEntityDescription(
                 key=key,
@@ -195,7 +203,9 @@ async def async_setup_entry(
                 native_unit_of_measurement=config.get("unit"),
                 options=options,
                 state_class=state_class,
-                suggested_display_precision=suggested_display_precision,
+                suggested_display_precision=sensor_description.get(
+                    "suggested_display_precision"
+                ),
                 entity_registry_enabled_default=sensor_description.get("enabled", True),
             )
             entities.append(
@@ -214,6 +224,6 @@ class MyPVSensor(MyPVDataEntity, SensorEntity):
 
     @property
     @override
-    def native_value(self) -> Any:
+    def native_value(self) -> StateType | date | datetime | Decimal:
         """Return the value reported by the sensor."""
         return self.coordinator.device.get_data_value(self.entity_description.key)

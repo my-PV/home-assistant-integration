@@ -1,6 +1,6 @@
 """Data update coordinator for the my-PV integration."""
 
-from collections.abc import Callable, Coroutine, ItemsView
+from collections.abc import Callable, Coroutine
 from datetime import timedelta
 import functools
 import logging
@@ -27,10 +27,10 @@ UPDATE_INTERVAL = timedelta(seconds=5)
 
 
 def _my_pv_connection[T](
-    func: Callable[..., Coroutine[Any, Any, T]],
-) -> Callable[..., Coroutine[Any, Any, T]]:
+    func: Callable[..., Coroutine[Any, Any, bool]],
+) -> Callable[..., Coroutine[Any, Any, bool]]:
     @functools.wraps(func)
-    async def wrapper(self, *args: Any, **kwargs: Any) -> T:
+    async def wrapper(self, *args: Any, **kwargs: Any) -> bool:
         try:
             if not self.device.connected and not await self.device.connect():
                 raise HomeAssistantError(
@@ -39,6 +39,10 @@ def _my_pv_connection[T](
                 )
 
             return await func(self, *args, **kwargs)
+        except MyPVTooManyRequestsError as exc:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN, translation_key="rate_limiting"
+            ) from exc
         except MyPVAuthenticationError as exc:
             raise ConfigEntryAuthFailed(
                 translation_domain=DOMAIN,
@@ -61,10 +65,6 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
     """my-PV Data Update Coordinator."""
 
     config_entry: MyPVConfigEntry
-
-    _data_configurations: ItemsView[str, Any] | None = None
-    _setup_configurations: ItemsView[str, Any] | None = None
-    _command_configurations: ItemsView[str, Any] | None = None
 
     def __init__(
         self,
@@ -104,29 +104,6 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
             hw_version=device.hardware_version,
         )
 
-    @property
-    def setup_configurations(self) -> ItemsView[str, Any]:
-        """Get the configurations for the available setup parameters."""
-        if not self._setup_configurations:
-            self._setup_configurations = self.device.get_setup_configurations().items()
-        return self._setup_configurations
-
-    @property
-    def data_configurations(self) -> ItemsView[str, Any]:
-        """Get data configuration for given key."""
-        if not self._data_configurations:
-            self._data_configurations = self.device.get_data_configurations().items()
-        return self._data_configurations
-
-    @property
-    def command_configurations(self) -> ItemsView[str, Any]:
-        """Get command configuration for given key."""
-        if not self._command_configurations:
-            self._command_configurations = (
-                self.device.get_command_configurations().items()
-            )
-        return self._command_configurations
-
     async def async_disconnect(self) -> bool:
         """Disconnect from my-PV."""
         return await self.device.disconnect()
@@ -149,11 +126,9 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
         except MyPVTooManyRequestsError:
             # Keep using the old data when the device is rate limiting.
             # Don't raise an UpdateFailed error since this will make the device unavailable but
-            # reduce the update interval to 10 seconds.
-            _LOGGER.info(
-                "Device is rate limiting, reducing update interval to 10 seconds"
-            )
-            self.update_interval = timedelta(seconds=10)
+            # reduce the update interval instead.
+            _LOGGER.info("Device is rate limiting, reducing update interval")
+            self.update_interval = 2 * UPDATE_INTERVAL
         except MyPVAuthenticationError as exc:
             raise ConfigEntryAuthFailed(
                 translation_domain=DOMAIN,
@@ -167,8 +142,8 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
             ) from exc
 
     @_my_pv_connection
-    async def set_setup_value(self, key: str, value: bool | float | str) -> bool:
-        """Set setup value for the given key."""
+    async def set_setup_value(self, key: str, value: Any) -> bool:
+        """Set a setup value."""
         result = await self.device.set_setup_value(key, value)
         self.async_update_listeners()
         return result
@@ -181,7 +156,9 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
         return result
 
     @_my_pv_connection
-    async def send_command(self, key, value: bool | float | str | None = None):
+    async def send_command(
+        self, key: str, value: bool | float | str | None = None
+    ) -> bool:
         """Send command."""
         result = await self.device.send_command(key, value)
         self.async_update_listeners()

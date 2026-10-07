@@ -7,7 +7,8 @@
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
       "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-      "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]"
+      "unique_id_mismatch": "The device serial number does not match the original device.",
+      "unsupported_device": "This my-PV device is not supported."
     },
     "error": {
       "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
@@ -37,7 +38,7 @@
         "description": "[%key:component::my_pv::common::discovery_description%]",
         "title": "{name}"
       },
-      "reauth": {
+      "reauth_confirm": {
         "data": {
           "password": "[%key:common::config_flow::data::password%]"
         },
@@ -65,36 +66,36 @@
     },
     "number": {
       "bsttemp": {
-        "name": "Boost Target Temperature"
+        "name": "Boost target temperature"
       },
       "maxpwr": {
-        "name": "Maximum Power"
+        "name": "Maximum power"
       },
       "ww1boost": {
-        "name": "Boost Target Temperature"
+        "name": "Boost target temperature"
       },
       "ww_boost_h": {
-        "name": "Minimum Hysteresis"
+        "name": "Minimum hysteresis"
       },
       "ww_targ_h": {
-        "name": "Maximum Hysteresis"
+        "name": "Maximum hysteresis"
       }
     },
     "select": {
       "bstmode": {
-        "name": "Boost Mode",
+        "name": "Boost mode",
         "state": {
-          "0": "Off",
-          "1": "On",
-          "3": "Relais",
-          "4": "SELV-Relais",
-          "5": "AUX-Relais"
+          "0": "[%key:common::state::off%]",
+          "1": "[%key:common::state::on%]",
+          "3": "Relay",
+          "4": "SELV relay",
+          "5": "AUX relay"
         }
       }
     },
     "sensor": {
       "cur_eth_mode": {
-        "name": "Network Mode",
+        "name": "Network mode",
         "state": {
           "0": "LAN",
           "1": "WLAN",
@@ -111,15 +112,15 @@
         "name": "Current phase L3"
       },
       "freq": {
-        "name": "Mains Frequency"
+        "name": "Mains frequency"
       },
       "power_solar": {
-        "name": "PV Power"
+        "name": "PV power"
       },
       "screen_mode_flag": {
-        "name": "Device Status",
+        "name": "Device status",
         "state": {
-          "0": "Standby",
+          "0": "[%key:common::state::standby%]",
           "1": "Heat",
           "2": "Boost",
           "3": "Heating finished",
@@ -127,9 +128,6 @@
           "5": "Failure",
           "6": "Block active"
         }
-      },
-      "temp_ps": {
-        "name": "Device temperature"
       },
       "temp1": {
         "name": "Temperature 1"
@@ -142,6 +140,9 @@
       },
       "temp4": {
         "name": "Temperature 4"
+      },
+      "temp_ps": {
+        "name": "Device temperature"
       },
       "uptime": {
         "name": "Uptime"
@@ -156,10 +157,10 @@
         "name": "Voltage phase L3"
       },
       "volt_solar": {
-        "name": "PV Voltage"
+        "name": "PV voltage"
       },
       "wifi_signal": {
-        "name": "Wi-Fi Signal Strength",
+        "name": "Wi-Fi signal strength",
         "state": {
           "0": "Poor",
           "1": "Low",
@@ -169,18 +170,18 @@
         }
       },
       "wifi_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi signal strength"
       }
     },
     "switch": {
       "boostactive": {
-        "name": "Boost Active"
+        "name": "Boost active"
       },
       "bstmode": {
-        "name": "Boost Mode"
+        "name": "Boost mode"
       },
       "bststrt": {
-        "name": "Manual Boost"
+        "name": "Manual boost"
       }
     }
   },
@@ -191,14 +192,23 @@
     "cannot_connect": {
       "message": "[%key:common::config_flow::error::cannot_connect%]"
     },
+    "device_not_supported": {
+      "message": "[%key:component::my_pv::common::discovery_description%]"
+    },
     "device_unavailable": {
       "message": "Device on {uri} is unavailable"
     },
     "fetch_failed": {
       "message": "Failed to fetch data."
     },
+    "rate_limiting": {
+      "message": "Too many requests."
+    },
     "unknown_error": {
       "message": "The device could not complete the requested action."
+    },
+    "unsupported_device": {
+      "message": "This my-PV device is not supported."
     }
   }
 }

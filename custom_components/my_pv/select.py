@@ -28,7 +28,7 @@ async def async_setup_entry(
             key="bstmode",
             entity_category=EntityCategory.CONFIG,
             translation_key="bstmode",
-            entity_registry_enabled_default=False,
+            options=list(config.get("options", {}).keys()),
         )
         entities.append(
             MyPVSelect(
@@ -43,16 +43,6 @@ async def async_setup_entry(
 
 class MyPVSelect(MyPVSetupEntity, SelectEntity):
     """my-PV select."""
-
-    @property
-    @override
-    def options(self) -> list[str]:
-        """Return a set of selectable options."""
-        return list(
-            self.coordinator.device.get_setup_configuration(
-                self.entity_description.key
-            )["options"].keys()
-        )
 
     @property
     @override
