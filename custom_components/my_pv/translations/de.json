@@ -1,0 +1,222 @@
+{
+    "common": {
+        "discovery_description": "Möchten Sie {name} einrichten?",
+        "password_description": "Das Passwort Ihres my-PV-Geräts. Wenn kein eigenes Passwort festgelegt wurde, müssen Sie den **devicekey** verwenden. Sie finden ihn im Info-Menü (ⓘ) Ihres my-PV-Geräts. Beim HEA•THOR IoT finden Sie den **devicekey** auf dem Geräteetikett."
+    },
+    "config": {
+        "abort": {
+            "already_configured": "Das Gerät ist bereits eingerichtet",
+            "cannot_connect": "Verbindung fehlgeschlagen",
+            "reauth_successful": "Die erneute Authentifizierung war erfolgreich"
+        },
+        "error": {
+            "cannot_connect": "Verbindung fehlgeschlagen",
+            "invalid_password": "Ungültiges Passwort",
+            "unknown_error": "Unerwarteter Fehler"
+        },
+        "step": {
+            "auth": {
+                "data": {
+                    "password": "Passwort"
+                },
+                "data_description": {
+                    "password": "Das Passwort Ihres my-PV-Geräts. Wenn kein eigenes Passwort festgelegt wurde, müssen Sie den **devicekey** verwenden. Sie finden ihn im Info-Menü (ⓘ) Ihres my-PV-Geräts. Beim HEA•THOR IoT finden Sie den **devicekey** auf dem Geräteetikett."
+                },
+                "title": "Passwort für {name}"
+            },
+            "discovery_auth": {
+                "data": {
+                    "password": "Passwort"
+                },
+                "data_description": {
+                    "password": "Das Passwort Ihres my-PV-Geräts. Wenn kein eigenes Passwort festgelegt wurde, müssen Sie den **devicekey** verwenden. Sie finden ihn im Info-Menü (ⓘ) Ihres my-PV-Geräts. Beim HEA•THOR IoT finden Sie den **devicekey** auf dem Geräteetikett."
+                },
+                "description": "Möchten Sie {name} einrichten?",
+                "title": "{name}"
+            },
+            "discovery_confirm": {
+                "description": "Möchten Sie {name} einrichten?",
+                "title": "{name}"
+            },
+            "reauth": {
+                "data": {
+                    "password": "Passwort"
+                },
+                "data_description": {
+                    "password": "Das Passwort Ihres my-PV-Geräts. Wenn kein eigenes Passwort festgelegt wurde, müssen Sie den **devicekey** verwenden. Sie finden ihn im Info-Menü (ⓘ) Ihres my-PV-Geräts. Beim HEA•THOR IoT finden Sie den **devicekey** auf dem Geräteetikett."
+                },
+                "title": "Passwort für {name}"
+            },
+            "user": {
+                "data": {
+                    "host": "Host"
+                },
+                "data_description": {
+                    "host": "Die IP-Adresse oder der Hostname Ihres my-PV-Geräts."
+                },
+                "title": "my-PV-Gerät"
+            }
+        }
+    },
+    "entity": {
+        "binary_sensor": {
+            "blockactive": {
+                "name": "Sperrstatus"
+            }
+        },
+        "button": {
+            "check_fwupd": {
+                "name": "Nach Firmware-Update suchen"
+            },
+            "firmware_download": {
+                "name": "Firmware herunterladen"
+            },
+            "p9s_fw": {
+                "name": "Firmware-Update"
+            },
+            "ps_fw": {
+                "name": "Firmware-Update des Leistungsteils"
+            },
+            "reboot_device": {
+                "name": "Neustart"
+            }
+        },
+        "number": {
+            "bsttemp": {
+                "name": "Zieltemperatur der Nachheizung"
+            },
+            "maxpwr": {
+                "name": "Maximale Leistung"
+            },
+            "ww1boost": {
+                "name": "Zieltemperatur der Nachheizung"
+            },
+            "ww_boost_h": {
+                "name": "Minimale Hysterese"
+            },
+            "ww_targ_h": {
+                "name": "Maximale Hysterese"
+            }
+        },
+        "select": {
+            "bstmode": {
+                "name": "Nachheizmodus",
+                "state": {
+                    "0": "Aus",
+                    "1": "Ein",
+                    "3": "Relais",
+                    "4": "SELV-Relais",
+                    "5": "AUX-Relais"
+                }
+            }
+        },
+        "sensor": {
+            "cur_eth_mode": {
+                "name": "Netzwerkmodus",
+                "state": {
+                    "0": "LAN",
+                    "1": "WLAN",
+                    "2": "Access Point"
+                }
+            },
+            "curr_l1": {
+                "name": "Strom Phase L1"
+            },
+            "curr_l2": {
+                "name": "Strom Phase L2"
+            },
+            "curr_l3": {
+                "name": "Strom Phase L3"
+            },
+            "freq": {
+                "name": "Netzfrequenz"
+            },
+            "power_solar": {
+                "name": "PV-Leistung"
+            },
+            "screen_mode_flag": {
+                "name": "Gerätestatus",
+                "state": {
+                    "0": "Standby",
+                    "1": "Heizen",
+                    "2": "Nachheizen",
+                    "3": "Aufheizen beendet",
+                    "4": "Keine Verbindung / Deaktiviert",
+                    "5": "Fehler",
+                    "6": "Sperre aktiv"
+                }
+            },
+            "temp_ps": {
+                "name": "Gerätetemperatur"
+            },
+            "temp1": {
+                "name": "Temperatur 1"
+            },
+            "temp2": {
+                "name": "Temperatur 2"
+            },
+            "temp3": {
+                "name": "Temperatur 3"
+            },
+            "temp4": {
+                "name": "Temperatur 4"
+            },
+            "uptime": {
+                "name": "Betriebszeit"
+            },
+            "volt_l1": {
+                "name": "Spannung Phase L1"
+            },
+            "volt_l2": {
+                "name": "Spannung Phase L2"
+            },
+            "volt_l3": {
+                "name": "Spannung Phase L3"
+            },
+            "volt_solar": {
+                "name": "PV-Spannung"
+            },
+            "wifi_signal": {
+                "name": "WLAN-Signalstärke",
+                "state": {
+                    "0": "Schwach",
+                    "1": "Niedrig",
+                    "2": "Mittel",
+                    "3": "Gut",
+                    "4": "Sehr gut"
+                }
+            },
+            "wifi_signal_strength": {
+                "name": "WLAN-Signalstärke"
+            }
+        },
+        "switch": {
+            "boostactive": {
+                "name": "Nachheizung aktiv"
+            },
+            "bstmode": {
+                "name": "Nachheizmodus"
+            },
+            "bststrt": {
+                "name": "Manuelle Nachheizung"
+            }
+        }
+    },
+    "exceptions": {
+        "auth_error": {
+            "message": "Authentifizierung fehlgeschlagen. Bitte authentifizieren Sie sich erneut."
+        },
+        "cannot_connect": {
+            "message": "Verbindung fehlgeschlagen"
+        },
+        "device_unavailable": {
+            "message": "Das Gerät unter {uri} ist nicht verfügbar"
+        },
+        "fetch_failed": {
+            "message": "Daten konnten nicht abgerufen werden."
+        },
+        "unknown_error": {
+            "message": "Unbekannter Fehler."
+        }
+    }
+}
