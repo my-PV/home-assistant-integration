@@ -65,9 +65,6 @@
             }
         },
         "number": {
-            "bsttemp": {
-                "name": "Sicherstellungstemperatur"
-            },
             "maxpwr": {
                 "name": "Maximale Leistung"
             },

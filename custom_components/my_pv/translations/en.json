@@ -65,9 +65,6 @@
             }
         },
         "number": {
-            "bsttemp": {
-                "name": "Boost target temperature"
-            },
             "maxpwr": {
                 "name": "Maximum power"
             },

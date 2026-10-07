@@ -65,9 +65,6 @@
             }
         },
         "number": {
-            "bsttemp": {
-                "name": "Boost-doeltemperatuur"
-            },
             "maxpwr": {
                 "name": "Maximaal vermogen"
             },
