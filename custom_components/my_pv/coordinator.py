@@ -145,14 +145,14 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
     async def set_setup_value(self, key: str, value: Any) -> bool:
         """Set a setup value."""
         result = await self.device.set_setup_value(key, value)
-        self.async_update_listeners()
+        self.async_set_updated_data(None)
         return result
 
     @_my_pv_connection
     async def set_target_temperature(self, temperature: float) -> bool:
         """Set target temperature."""
         result = await self.device.set_target_temperature(temperature)
-        self.async_update_listeners()
+        self.async_set_updated_data(None)
         return result
 
     @_my_pv_connection
@@ -161,26 +161,26 @@ class MyPVCoordinator(DataUpdateCoordinator[None]):
     ) -> bool:
         """Send command."""
         result = await self.device.send_command(key, value)
-        self.async_update_listeners()
+        self.async_set_updated_data(None)
         return result
 
     @_my_pv_connection
     async def turn_on(self) -> bool:
         """Turn on the device."""
         result = await self.device.turn_on()
-        self.async_update_listeners()
+        self.async_set_updated_data(None)
         return result
 
     @_my_pv_connection
     async def turn_off(self) -> bool:
         """Turn off the device."""
         result = await self.device.turn_off()
-        self.async_update_listeners()
+        self.async_set_updated_data(None)
         return result
 
     @_my_pv_connection
     async def update_firmware(self) -> bool:
         """Send command."""
         result = await self.device.update_firmware()
-        self.async_update_listeners()
+        self.async_set_updated_data(None)
         return result
